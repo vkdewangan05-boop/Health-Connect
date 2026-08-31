@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | HealthConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+<div class="auth-container">
+    <div class="login-card register-card">
+
+        <!-- HEADER -->
+        <div class="auth-header">
+            <div class="auth-logo-badge">
+                <span class="badge-dot"></span> HealthConnect
+            </div>
+            <h1>Create Account</h1>
+            <p>Join HealthConnect and access connected healthcare</p>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <form id="registerForm">
+
+            <!-- ACCOUNT TYPE -->
+            <div class="form-group">
+                <label for="accountType">Account Type</label>
+                <div class="select-wrapper">
+                    <select id="accountType" name="accountType" required>
+                        <option value="">Select Account Type</option>
+                        <option value="USER">Patient / User</option>
+                        <option value="DOCTOR">Doctor</option>
+                        <option value="STUDENT">Medical Student</option>
+                        <option value="HOSPITAL">Hospital</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- BASIC INFORMATION -->
+            <div class="form-group">
+                <label for="fullName">Full Name / Contact Person</label>
+                <input type="text" id="fullName" name="fullName" placeholder="Enter full name" required>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter email address" required>
+            </div>
+
+            <!-- MOBILE -->
+            <div class="form-group">
+                <label for="mobile">Mobile Number</label>
+                <input type="tel" id="mobile" name="mobile" placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]{10}" inputmode="numeric" required>
+            </div>
+
+            <!-- USERNAME -->
+            <div class="form-group">
+                <label for="registerUsername">Username</label>
+                <input type="text" id="registerUsername" name="username" placeholder="Create a username" autocomplete="username" required>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <input type="password" id="registerPassword" name="password" placeholder="Create a password" autocomplete="new-password" required>
+            </div>
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" autocomplete="new-password" required>
+            </div>
+
+            <!-- HOSPITAL SECTION -->
+            <div id="hospitalSection" class="dynamic-section" style="display: none;">
+                <div class="section-divider">
+                    <span>Hospital Information</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="hospitalName">Hospital Name</label>
+                    <input type="text" id="hospitalName" name="hospitalName" placeholder="Enter hospital name">
+                </div>
+
+                <div class="form-group">
+                    <label for="hospitalLocation">Hospital Location</label>
+                    <input type="text" id="hospitalLocation" name="hospitalLocation" placeholder="Enter city / district / state">
+                </div>
+
+                <div class="form-group">
+                    <label for="hospitalType">Hospital Type</label>
+                    <div class="select-wrapper">
+                        <select id="hospitalType" name="hospitalType">
+                            <option value="">Select Hospital Type</option>
+                            <option value="GOVERNMENT">Government Hospital</option>
+                            <option value="PRIVATE">Private Hospital</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="emergencyContact">Emergency Contact</label>
+                    <input type="tel" id="emergencyContact" name="emergencyContact" placeholder="Enter emergency contact" maxlength="10" pattern="[0-9]{10}" inputmode="numeric">
+                </div>
+
+                <div class="form-group">
+                    <label for="hospitalFacilities">Hospital Facilities</label>
+                    <input type="text" id="hospitalFacilities" name="hospitalFacilities" placeholder="e.g. Emergency, ICU, MRI, CT Scan">
+                </div>
+
+                <div class="form-group">
+                    <label for="hospitalAvailable">Availability</label>
+                    <div class="select-wrapper">
+                        <select id="hospitalAvailable" name="hospitalAvailable">
+                            <option value="">Select availability</option>
+                            <option value="AVAILABLE">Available</option>
+                            <option value="NOT_AVAILABLE">Not Available</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOCTOR SECTION -->
+            <div id="doctorSection" class="dynamic-section" style="display: none;">
+                <div class="section-divider">
+                    <span>Doctor Professional Information</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="doctorIdentityNumber">Doctor Identity Number</label>
+                    <input type="text" id="doctorIdentityNumber" name="doctorIdentityNumber" placeholder="Enter official Doctor Identity Number" maxlength="100" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="specialization">Specialization</label>
+                    <input type="text" id="specialization" name="specialization" placeholder="e.g. General Medicine">
+                </div>
+
+                <div class="form-group">
+                    <label for="qualification">Qualification</label>
+                    <input type="text" id="qualification" name="qualification" placeholder="e.g. MBBS, MD">
+                </div>
+
+                <div class="form-group">
+                    <label for="experience">Experience (Years)</label>
+                    <input type="number" id="experience" name="experience" min="0" step="1" placeholder="Enter experience">
+                </div>
+
+                <div class="form-group">
+                    <label for="doctorType">Healthcare Sector</label>
+                    <div class="select-wrapper">
+                        <select id="doctorType" name="doctorType">
+                            <option value="">Select Healthcare Sector</option>
+                            <option value="GOVERNMENT">Government Doctor</option>
+                            <option value="PRIVATE">Private Doctor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="doctorHospitalName">Hospital / Clinic Name</label>
+                    <input type="text" id="doctorHospitalName" name="doctorHospitalName" placeholder="Enter hospital or clinic name">
+                </div>
+
+                <div class="form-group">
+                    <label for="hospitalAddress">Hospital / Clinic Address</label>
+                    <input type="text" id="hospitalAddress" name="hospitalAddress" placeholder="Enter hospital address">
+                </div>
+
+                <div class="form-group">
+                    <label for="consultationFee">Consultation Fee</label>
+                    <input type="number" id="consultationFee" name="consultationFee" min="0" step="0.01" placeholder="Enter consultation fee">
+                </div>
+            </div>
+
+            <!-- STUDENT SECTION -->
+            <div id="studentSection" class="dynamic-section" style="display: none;">
+                <div class="section-divider">
+                    <span>Medical Student Information</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentCollegeName">Medical College Name</label>
+                    <input type="text" id="studentCollegeName" name="studentCollegeName" placeholder="Enter medical college name">
+                </div>
+
+                <div class="form-group">
+                    <label for="studentQualification">Qualification</label>
+                    <input type="text" id="studentQualification" name="studentQualification" placeholder="Example: MBBS">
+                </div>
+
+                <div class="form-group">
+                    <label for="studentYear">Current Year</label>
+                    <div class="select-wrapper">
+                        <select id="studentYear" name="studentYear">
+                            <option value="">Select Year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                            <option value="5">5th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="studentId">Student ID</label>
+                    <input type="text" id="studentId" name="studentId" placeholder="Enter college student ID">
+                </div>
+            </div>
+
+            <!-- TERMS -->
+            <div class="register-terms">
+                <label>
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <span>I agree to the <a href="#" target="_blank">Terms</a> and <a href="#" target="_blank">Privacy Policy</a>.</span>
+                </label>
+            </div>
+
+            <!-- REGISTER BUTTON -->
+            <button type="submit" class="login-btn register-submit-btn" id="registerButton">
+                Create Account
+            </button>
+
+            <!-- MESSAGE -->
+            <p id="registerMessage"></p>
+
+        </form>
+
+        <!-- LOGIN SWITCH -->
+        <div class="auth-switch">
+            <span>Already have an account?</span>
+            <a href="login.html">Login</a>
+        </div>
+
+        <!-- BACK HOME -->
+        <div class="back-home">
+            <a href="index.html">← Back to Home</a>
+        </div>
+
+    </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/auth.js"></script>
+
+</body>
+</html>

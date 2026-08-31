@@ -1,0 +1,146 @@
+/* =========================================
+   DASHBOARD COMMON CSS
+========================================= */
+
+.dashboard-container {
+    min-height: 100vh;
+    background: #f4f8fb;
+}
+
+.dashboard-header {
+    background: #0c8f8f;
+    color: white;
+    padding: 18px 30px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.dashboard-header p {
+    margin: 4px 0 0;
+    font-size: 14px;
+}
+
+.dashboard-content {
+    padding: 30px;
+}
+
+.dashboard-title {
+    margin-bottom: 25px;
+}
+
+.dashboard-title h2 {
+    color: #222;
+    margin-bottom: 5px;
+}
+
+.dashboard-title p {
+    color: #666;
+}
+
+/* Cards */
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.dashboard-card {
+    background: white;
+    padding: 25px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    transition: 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+}
+
+.dashboard-card h3 {
+    color: #0b7fab;
+    margin-bottom: 10px;
+}
+
+.dashboard-card p {
+    color: #666;
+}
+
+/* Buttons */
+
+.dashboard-btn {
+    display: inline-block;
+
+    padding: 10px 18px;
+
+    background: #0b7fab;
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 6px;
+
+    margin-top: 12px;
+}
+
+.dashboard-btn:hover {
+    background: #086687;
+}
+
+.logout-btn {
+    background: #dc3545;
+    color: white;
+
+    border: none;
+
+    padding: 9px 16px;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #b02a37;
+}
+
+/* Table */
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    background: white;
+
+    margin-top: 20px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.data-table th,
+.data-table td {
+    padding: 13px;
+
+    border-bottom: 1px solid #ddd;
+
+    text-align: left;
+}
+
+.data-table th {
+    background: #0b7fab;
+    color: white;
+}
+
+.data-table tr:hover {
+    background: #f5f9fb;
+}

@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Doctor Consultation - HealthConnect</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #0f766e;
+            color: white;
+            padding: 22px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            background: #115e59;
+            padding: 10px 16px;
+            border-radius: 7px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #0f766e;
+        }
+
+        form {
+            display: grid;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            margin-top: 6px;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 7px;
+            background: #0f766e;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .reject-btn {
+            background: #dc2626;
+        }
+
+        .reject-btn:hover {
+            background: #b91c1c;
+        }
+
+        .call-btn {
+            background: #2563eb;
+        }
+
+        .call-request {
+            border: 1px solid #d1d5db;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: #f9fafb;
+        }
+
+        .consultation {
+            border: 1px solid #e5e7eb;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+
+        .consultation p,
+        .call-request p {
+            margin: 7px 0;
+        }
+
+        .message {
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .status-accepted {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .status-rejected {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            color: #6b7280;
+            padding: 15px 0;
+        }
+
+        .button-row {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .patient-request {
+            border: 1px solid #d1d5db;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: #f9fafb;
+        }
+
+        .accept-consultation-btn {
+            background: #16a34a;
+        }
+
+        .accept-consultation-btn:hover {
+            background: #15803d;
+        }
+
+        .record-req-btn {
+            background: #4f46e5;
+        }
+
+        .record-req-btn:hover {
+            background: #4338ca;
+        }
+
+        .record-view-btn {
+            background: #0284c7;
+        }
+
+        .record-view-btn:hover {
+            background: #0369a1;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div>
+
+        <h1>
+            HealthConnect
+        </h1>
+
+        <p>
+            Doctor Consultation Management
+        </p>
+
+    </div>
+
+
+    <a href="doctor-dashboard.html"
+       class="back-btn">
+
+        Dashboard
+
+    </a>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <!-- =====================================================
+         INCOMING CONSULTATION REQUESTS
+         ===================================================== -->
+
+    <div class="card">
+
+        <h2>
+            📋 Patient Consultation Requests
+        </h2>
+
+        <p style="margin-bottom:20px; color:#6b7280;">
+
+            Consultation requests sent by patients
+            will appear here.
+
+        </p>
+
+
+        <button
+            type="button"
+            onclick="loadIncomingConsultations()">
+
+            🔄 Refresh Consultation Requests
+
+        </button>
+
+
+        <div
+            id="incomingConsultationList"
+            style="margin-top:20px;">
+
+            Loading consultation requests...
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         INCOMING CALL REQUESTS
+         ===================================================== -->
+
+    <div class="card">
+
+        <h2>
+            📞 Incoming Call Requests
+        </h2>
+
+        <p style="margin-bottom:20px; color:#6b7280;">
+
+            Patients can request an audio or video call
+            after their consultation has been accepted.
+
+        </p>
+
+
+        <button
+            type="button"
+            onclick="loadIncomingCallRequests()">
+
+            🔄 Refresh Call Requests
+
+        </button>
+
+
+        <div
+            id="callRequestList"
+            style="margin-top:20px;">
+
+            Loading call requests...
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CREATE CONSULTATION
+         ===================================================== -->
+
+    <div class="card">
+
+        <h2>
+            Create Consultation
+        </h2>
+
+
+        <form id="consultationForm">
+
+
+            <div>
+
+                <label>
+                    User ID
+                </label>
+
+                <input
+                    type="number"
+                    id="userId"
+                    required
+                    placeholder="Enter patient user ID">
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Doctor ID
+                </label>
+
+                <input
+                    type="number"
+                    id="doctorId"
+                    required
+                    placeholder="Doctor ID">
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Doctor Name
+                </label>
+
+                <input
+                    type="text"
+                    id="doctorName"
+                    required
+                    placeholder="Doctor name">
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Specialty
+                </label>
+
+                <input
+                    type="text"
+                    id="specialty"
+                    required
+                    placeholder="Example: General Physician">
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    id="date"
+                    required>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Time
+                </label>
+
+                <input
+                    type="time"
+                    id="time"
+                    required>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Consultation Type
+                </label>
+
+                <select id="type">
+
+                    <option value="Online">
+                        Online
+                    </option>
+
+                    <option value="Offline">
+                        Offline
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label>
+                    Status
+                </label>
+
+                <select id="status">
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="Confirmed">
+                        Confirmed
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button type="submit">
+
+                Create Consultation
+
+            </button>
+
+        </form>
+
+
+        <p
+            id="message"
+            class="message">
+        </p>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ALL CONSULTATIONS
+         ===================================================== -->
+
+    <div class="card">
+
+        <h2>
+            All Consultations
+        </h2>
+
+
+        <button
+            type="button"
+            onclick="loadConsultations()">
+
+            🔄 Refresh Consultations
+
+        </button>
+
+
+        <div
+            id="consultationList"
+            style="margin-top:20px;">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+
+</div>
+
+<script>
+
+const API =
+    "http://localhost:8080";
+
+
+// =====================================================
+// GET LOGGED-IN DOCTOR
+// =====================================================
+
+function getLoggedInDoctor() {
+
+    const keys = [
+        "loggedInDoctor",
+        "doctor",
+        "loggedInUser"
+    ];
+
+
+    for (const key of keys) {
+
+        const data =
+            localStorage.getItem(key);
+
+
+        if (!data) {
+            continue;
+        }
+
+
+        try {
+
+            const doctor =
+                JSON.parse(data);
+
+
+            if (
+                doctor &&
+                (
+                    doctor.id ||
+                    doctor.doctorId
+                )
+            ) {
+
+                return doctor;
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Doctor storage error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+
+// =====================================================
+// HTML SAFETY
+// =====================================================
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+
+// =====================================================
+// LOAD INCOMING CONSULTATIONS
+// =====================================================
+
+async function loadIncomingConsultations() {
+
+    const list =
+        document.getElementById(
+            "incomingConsultationList"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    const doctor =
+        getLoggedInDoctor();
+
+
+    if (
+        !doctor ||
+        !(
+            doctor.id ||
+            doctor.doctorId
+        )
+    ) {
+
+        list.innerHTML = `
+            <div class="patient-request">
+
+                <p style="color:red;">
+
+                    Doctor information not found.
+
+                    <br><br>
+
+                    Please login again.
+
+                </p>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    const doctorId =
+        Number(
+            doctor.id ??
+            doctor.doctorId
+        );
+
+
+    if (
+        !Number.isInteger(doctorId) ||
+        doctorId <= 0
+    ) {
+
+        list.innerHTML = `
+            <div class="patient-request">
+
+                <p style="color:red;">
+
+                    Invalid Doctor ID.
+
+                    <br><br>
+
+                    Please login again.
+
+                </p>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        "<p>Loading patient consultation requests...</p>";
+
+
+    try {
+
+        const response =
+            await fetch(
+                API +
+                "/api/consultations/doctor/" +
+                doctorId +
+                "/pending"
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                responseText ||
+                "Unable to load consultation requests."
+            );
+
+        }
+
+
+        let requests;
+
+
+        try {
+
+            requests =
+                JSON.parse(
+                    responseText
+                );
+
+        }
+
+        catch (error) {
+
+            throw new Error(
+                "Invalid consultation response."
+            );
+
+        }
+
+
+        if (
+            !Array.isArray(requests) ||
+            requests.length === 0
+        ) {
+
+            list.innerHTML = `
+                <div class="patient-request">
+
+                    <p class="empty-message">
+
+                        📭 No pending patient consultation requests.
+
+                    </p>
+
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        list.innerHTML =
+            "";
+
+
+        requests.forEach(
+            function(request) {
+
+                const patientUserId = request.patientId || request.userId;
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "patient-request";
+
+
+                card.innerHTML = `
+
+                    <h3>
+                        🧑‍⚕️ New Patient Consultation Request
+                    </h3>
+
+
+                    <p>
+                        <strong>
+                            Consultation ID:
+                        </strong>
+
+                        ${escapeHTML(
+                            request.id ??
+                            "N/A"
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Patient ID:
+                        </strong>
+
+                        ${escapeHTML(
+                            patientUserId ??
+                            "N/A"
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Patient:
+                        </strong>
+
+                        ${escapeHTML(
+                            request.patientUsername ||
+                            request.patientName ||
+                            "Patient"
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Doctor ID:
+                        </strong>
+
+                        ${escapeHTML(
+                            request.doctorId ??
+                            doctorId
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Reason:
+                        </strong>
+
+                        ${escapeHTML(
+                            request.reason ||
+                            "N/A"
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Status:
+                        </strong>
+
+                        <span class="status-pending">
+
+                            ${escapeHTML(
+                                request.status ||
+                                "PENDING"
+                            )}
+
+                        </span>
+
+                    </p>
+
+
+                    <div class="button-row">
+
+                        <button
+                            type="button"
+                            class="accept-consultation-btn"
+                            onclick="
+                                acceptConsultationRequest(
+                                    ${request.id}
+                                )
+                            "
+                        >
+
+                            ✅ Accept Consultation
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="reject-btn"
+                            onclick="
+                                rejectConsultationRequest(
+                                    ${request.id}
+                                )
+                            "
+                        >
+
+                            ❌ Reject Consultation
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="record-req-btn"
+                            onclick="
+                                requestMedicalRecordAccess(
+                                    ${request.id},
+                                    ${patientUserId}
+                                )
+                            "
+                        >
+
+                            📂 Request Record Access
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="record-view-btn"
+                            onclick="
+                                viewPatientMedicalRecords(
+                                    ${request.id},
+                                    ${patientUserId}
+                                )
+                            "
+                        >
+
+                            👁️ View Medical Records
+
+                        </button>
+
+                    </div>
+
+                `;
+
+
+                list.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "Incoming Consultation Error:",
+            error
+        );
+
+
+        list.innerHTML = `
+
+            <div class="patient-request">
+
+                <h3>
+                    Unable to Load Consultation Requests
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        error.message
+                    )}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// GET DOCTOR JWT TOKEN
+// =====================================================
+function getDoctorToken() {
+    const doctor = getLoggedInDoctor();
+    if (doctor) {
+        const token = doctor.token || doctor.jwt || doctor.accessToken || doctor.jwtToken;
+        if (token && String(token).trim() !== "") {
+            return String(token).trim();
+        }
+    }
+    const fallbackToken = localStorage.getItem("token") || localStorage.getItem("jwtToken") || localStorage.getItem("doctorToken");
+    return fallbackToken ? fallbackToken.trim() : null;
+}
+
+// =====================================================
+// ACCEPT CONSULTATION (WITH JWT TOKEN)
+// =====================================================
+async function acceptConsultationRequest(consultationId) {
+    if (!consultationId) return;
+
+    const doctor = getLoggedInDoctor();
+    const doctorId = Number(doctor?.id ?? doctor?.doctorId);
+
+    if (!Number.isInteger(doctorId) || doctorId <= 0) {
+        alert("Doctor ID not found. Please login again.");
+        return;
+    }
+
+    if (!confirm("Accept this consultation request?")) return;
+
+    const token = getDoctorToken();
+    const headers = { "Content-Type": "application/json" };
+    if (token) {
+        headers["Authorization"] = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+    }
+
+    try {
+        const response = await fetch(
+            API + "/api/consultations/" + encodeURIComponent(consultationId) + "/accept/" + encodeURIComponent(doctorId),
+            {
+                method: "PUT",
+                headers: headers
+            }
+        );
+
+        const responseText = await response.text();
+        if (!response.ok) {
+            throw new Error(responseText || "Unable to accept consultation.");
+        }
+
+        alert("Consultation accepted successfully.");
+        await loadIncomingConsultations();
+
+    } catch(error) {
+        console.error("Accept Consultation Error:", error);
+        alert("Unable to accept consultation.\n\n" + error.message);
+    }
+}
+
+// =====================================================
+// REJECT CONSULTATION (WITH JWT TOKEN)
+// =====================================================
+async function rejectConsultationRequest(consultationId) {
+    if (!consultationId) return;
+
+    const doctor = getLoggedInDoctor();
+    const doctorId = Number(doctor?.id ?? doctor?.doctorId);
+
+    if (!Number.isInteger(doctorId) || doctorId <= 0) {
+        alert("Doctor ID not found. Please login again.");
+        return;
+    }
+
+    if (!confirm("Reject this consultation request?")) return;
+
+    const token = getDoctorToken();
+    const headers = { "Content-Type": "application/json" };
+    if (token) {
+        headers["Authorization"] = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+    }
+
+    try {
+        const response = await fetch(
+            API + "/api/consultations/" + encodeURIComponent(consultationId) + "/reject/" + encodeURIComponent(doctorId),
+            {
+                method: "PUT",
+                headers: headers
+            }
+        );
+
+        const responseText = await response.text();
+        if (!response.ok) {
+            throw new Error(responseText || "Unable to reject consultation.");
+        }
+
+        alert("Consultation request rejected.");
+        await loadIncomingConsultations();
+
+    } catch(error) {
+        console.error("Reject Consultation Error:", error);
+        alert("Unable to reject consultation.\n\n" + error.message);
+    }
+}
+
+
+// =====================================================
+// DOCTOR SENDS MEDICAL RECORD ACCESS REQUEST
+// =====================================================
+async function requestMedicalRecordAccess(consultationId, userId) {
+    if (!consultationId || !userId) {
+        alert("Missing Consultation ID or Patient User ID.");
+        return;
+    }
+
+    const doctor = getLoggedInDoctor();
+    const doctorId = Number(doctor?.id ?? doctor?.doctorId);
+
+    if (!Number.isInteger(doctorId) || doctorId <= 0) {
+        alert("Doctor ID not found. Please login again.");
+        return;
+    }
+
+    if (!confirm("Send request to patient to access their medical records?")) return;
+
+    const token = getDoctorToken();
+    const headers = { "Content-Type": "application/json" };
+    if (token) {
+        headers["Authorization"] = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+    }
+
+    try {
+        const response = await fetch(API + "/api/medical-record-access", {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify({
+                consultationId: consultationId,
+                userId: userId,
+                doctorId: doctorId,
+                status: "PENDING"
+            })
+        });
+
+        const responseText = await response.text();
+        if (!response.ok) {
+            throw new Error(responseText || "Unable to send access request.");
+        }
+
+        alert("Access request sent to patient successfully!");
+
+    } catch (error) {
+        console.error("Access Request Error:", error);
+        alert("Failed to send request:\n\n" + error.message);
+    }
+}
+
+// =====================================================
+// CHECK ACCESS & VIEW MEDICAL RECORDS
+// =====================================================
+async function viewPatientMedicalRecords(consultationId, userId) {
+    if (!consultationId || !userId) {
+        alert("Missing Consultation ID or Patient User ID.");
+        return;
+    }
+
+    const doctor = getLoggedInDoctor();
+    const doctorId = Number(doctor?.id ?? doctor?.doctorId);
+
+    if (!Number.isInteger(doctorId) || doctorId <= 0) {
+        alert("Doctor ID not found. Please login again.");
+        return;
+    }
+
+    const token = getDoctorToken();
+    const headers = {};
+    if (token) {
+        headers["Authorization"] = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+    }
+
+    try {
+        const response = await fetch(
+            `${API}/api/medical-record-access/check?consultationId=${consultationId}&doctorId=${doctorId}&userId=${userId}`,
+            { headers: headers }
+        );
+
+        if (!response.ok) {
+            throw new Error("Unable to verify access status.");
+        }
+
+        const hasAccess = await response.json();
+
+        if (hasAccess === true) {
+            alert("✅ Access Granted! Viewing patient medical records.");
+        } else {
+            alert("🔒 Access Denied! You do not have permission to view this patient's medical records.\n\nPlease click 'Request Record Access' first and wait for the patient to approve.");
+        }
+
+    } catch (error) {
+        console.error("Check Access Error:", error);
+        alert("Error checking access permission:\n\n" + error.message);
+    }
+}
+
+
+
+// =====================================================
+// INITIAL LOAD
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadIncomingConsultations();
+
+    }
+);
+
+
+
+// =====================================================
+// GLOBAL FUNCTIONS
+// =====================================================
+
+window.loadIncomingConsultations =
+    loadIncomingConsultations;
+
+
+window.acceptConsultationRequest =
+    acceptConsultationRequest;
+
+
+window.rejectConsultationRequest =
+    rejectConsultationRequest;
+
+window.requestMedicalRecordAccess =
+    requestMedicalRecordAccess;
+
+window.viewPatientMedicalRecords =
+    viewPatientMedicalRecords;
+
+</script>
+
+</body>
+
+</html>

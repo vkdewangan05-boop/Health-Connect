@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Medicine Stock - Doctor - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/doctor.css">
+    <link rel="stylesheet" href="../Css/response.css">
+
+ <style>
+
+        .stock-search-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.08);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .search-row input {
+            flex: 1;
+            min-width: 220px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+        }
+
+        .search-row button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+        }
+
+        .stock-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(280px, 1fr));
+
+            gap: 20px;
+        }
+
+        .stock-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.08);
+            border-left: 5px solid #2563eb;
+        }
+
+        .stock-card.low-stock {
+            border-left-color: #dc2626;
+        }
+
+        .stock-card h3 {
+            margin-top: 0;
+        }
+
+        .available {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .low {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .message {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .empty-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,.08);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 16px;
+            border-radius: 7px;
+            background: #374151;
+            color: white;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>HealthConnect</h1>
+
+            <p>Doctor Portal</p>
+
+        </div>
+
+
+        <button
+            class="logout-btn"
+            onclick="logoutDoctor()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <main class="dashboard-content">
+
+
+        <div class="dashboard-title">
+
+            <h2>Hospital Medicine Stock</h2>
+
+            <p>
+                Check medicine availability at
+                any registered hospital using
+                Hospital ID.
+            </p>
+
+        </div>
+
+
+
+        <div class="stock-search-card">
+
+            <h2>
+                Check Hospital Stock
+            </h2>
+
+            <p>
+                Enter the Hospital ID before
+                prescribing or referring a medicine.
+            </p>
+
+
+            <div class="search-row">
+
+                <input
+                    type="number"
+                    id="hospitalId"
+                    min="1"
+                    placeholder="Enter Hospital ID">
+
+
+                <button
+                    onclick="searchHospitalStock()">
+
+                    Check Stock
+
+                </button>
+
+
+                <button
+                    onclick="clearStock()"
+                    style="background:#6b7280;">
+
+                    Clear
+
+                </button>
+
+            </div>
+
+
+            <p
+                id="message"
+                class="message">
+            </p>
+
+        </div>
+
+
+
+        <div id="stockContainer">
+
+            <div class="empty-box">
+
+                <h3>
+                    Hospital Stock
+                </h3>
+
+                <p>
+                    Enter Hospital ID to
+                    view medicine availability.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <a
+            href="doctor-dashboard.html"
+            class="back-btn">
+
+            ← Back to Doctor Dashboard
+
+        </a>
+
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+const API_URL =
+    "http://localhost:8080";
+
+
+async function searchHospitalStock() {
+
+    const hospitalId =
+        document
+            .getElementById("hospitalId")
+            .value
+            .trim();
+
+
+    const message =
+        document.getElementById("message");
+
+
+    const container =
+        document.getElementById(
+            "stockContainer"
+        );
+
+
+    if (!hospitalId) {
+
+        message.textContent =
+            "Please enter Hospital ID.";
+
+        message.style.color =
+            "red";
+
+        return;
+    }
+
+
+    if (Number(hospitalId) <= 0) {
+
+        message.textContent =
+            "Hospital ID must be greater than 0.";
+
+        message.style.color =
+            "red";
+
+        return;
+    }
+
+
+    message.textContent =
+        "Loading stock...";
+
+    message.style.color =
+        "#374151";
+
+
+    container.innerHTML =
+        `
+        <div class="empty-box">
+
+            <h3>
+                Loading...
+            </h3>
+
+            <p>
+                Fetching current hospital stock.
+            </p>
+
+        </div>
+        `;
+
+
+    try {
+
+        const response =
+            await fetch(
+                API_URL +
+                "/api/hospital-stock/hospital/" +
+                hospitalId
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Stock request failed."
+            );
+
+        }
+
+
+        const stock =
+            await response.json();
+
+
+        if (!stock || stock.length === 0) {
+
+            message.textContent =
+                "No stock found for Hospital ID " +
+                hospitalId + ".";
+
+            message.style.color =
+                "red";
+
+
+            container.innerHTML =
+                `
+                <div class="empty-box">
+
+                    <h3>
+                        No Medicine Stock
+                    </h3>
+
+                    <p>
+                        This hospital currently
+                        has no stock records.
+                    </p>
+
+                </div>
+                `;
+
+            return;
+        }
+
+
+        message.textContent =
+            "Hospital stock loaded successfully.";
+
+        message.style.color =
+            "#15803d";
+
+
+        let html =
+            `
+            <div class="stock-grid">
+            `;
+
+
+        stock.forEach(item => {
+
+            const quantity =
+                Number(item.quantity || 0);
+
+
+            const reorderLevel =
+                Number(item.reorderLevel || 0);
+
+
+            const isLow =
+                quantity <= reorderLevel;
+
+
+            html +=
+                `
+                <div
+                    class="stock-card
+                    ${isLow ? "low-stock" : ""}">
+
+                    <h3>
+                        ${escapeHTML(
+                            item.medicineName ||
+                            "Unknown Medicine"
+                        )}
+                    </h3>
+
+
+                    <p>
+                        <strong>
+                            Medicine ID:
+                        </strong>
+
+                        ${item.medicineId}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Available Quantity:
+                        </strong>
+
+                        <span
+                            class="${isLow ? "low" : "available"}">
+
+                            ${quantity}
+
+                        </span>
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Reorder Level:
+                        </strong>
+
+                        ${reorderLevel}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Status:
+                        </strong>
+
+                        <span
+                            class="${isLow ? "low" : "available"}">
+
+                            ${isLow
+                                ? "Low Stock"
+                                : "Available"}
+
+                        </span>
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Batch:
+                        </strong>
+
+                        ${escapeHTML(
+                            item.batchNumber || "-"
+                        )}
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Expiry:
+                        </strong>
+
+                        ${escapeHTML(
+                            item.expiryDate || "-"
+                        )}
+                    </p>
+
+                </div>
+                `;
+
+        });
+
+
+        html +=
+            `
+            </div>
+            `;
+
+
+        container.innerHTML =
+            html;
+
+
+    } catch(error) {
+
+        console.error(error);
+
+
+        message.textContent =
+            "Unable to load hospital stock.";
+
+        message.style.color =
+            "red";
+
+
+        container.innerHTML =
+            `
+            <div class="empty-box">
+
+                <h3>
+                    Server Connection Error
+                </h3>
+
+                <p>
+                    Please make sure Spring Boot
+                    is running on port 8080.
+                </p>
+
+            </div>
+            `;
+
+    }
+
+}
+
+
+
+function clearStock() {
+
+    document
+        .getElementById("hospitalId")
+        .value = "";
+
+
+    document
+        .getElementById("message")
+        .textContent = "";
+
+
+    document
+        .getElementById("stockContainer")
+        .innerHTML =
+        `
+        <div class="empty-box">
+
+            <h3>
+                Hospital Stock
+            </h3>
+
+            <p>
+                Enter Hospital ID to
+                view medicine availability.
+            </p>
+
+        </div>
+        `;
+
+}
+
+
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+
+function logoutDoctor() {
+
+    localStorage.removeItem(
+        "loggedInUser"
+    );
+
+    localStorage.removeItem(
+        "isLoggedIn"
+    );
+
+    window.location.href =
+        "../login.html";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

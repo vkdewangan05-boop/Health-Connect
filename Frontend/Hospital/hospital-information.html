@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Information - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/dashboard.css">
+    <link rel="stylesheet" href="../Css/response.css">
+
+    <style>
+        .page-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 16px;
+            background: #64748b;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #475569;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 25px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .info-value {
+            color: #4b5563;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .unavailable {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .error-message {
+            color: #dc2626;
+        }
+
+        .success-message {
+            color: #15803d;
+        }
+
+        .warning-message {
+            color: #d97706;
+        }
+
+        .loading {
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .page-container {
+                margin: 20px auto;
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .info-value {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-container">
+
+    <a href="dashboard.html" class="back-btn">
+        ← Back
+    </a>
+
+    <div class="card">
+
+        <h1>🏥 Hospital Information</h1>
+
+        <div class="info-row">
+            <span class="info-label">Hospital ID</span>
+            <span id="hospitalId" class="info-value loading">Loading...</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Hospital Name</span>
+            <span id="hospitalName" class="info-value loading">Loading...</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Location</span>
+            <span id="hospitalLocation" class="info-value loading">Loading...</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Hospital Type</span>
+            <span id="hospitalType" class="info-value loading">Loading...</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Emergency Contact</span>
+            <span id="emergencyContact" class="info-value loading">Loading...</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Facilities</span>
+            <span id="hospitalFacilities" class="info-value loading">Loading...</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">Availability</span>
+            <span id="hospitalAvailable" class="info-value loading">Loading...</span>
+        </div>
+
+        <div id="informationMessage" class="message"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+    const HOSPITAL_API_URL = "http://localhost:8080/api/hospitals";
+
+    function getHospitalInformationToken() {
+        const tokenKeys = ["authToken", "token", "jwt", "accessToken"];
+        for (const key of tokenKeys) {
+            const token = localStorage.getItem(key);
+            if (token && token.trim() !== "") {
+                return token.trim();
+            }
+        }
+        const storedUser = localStorage.getItem("loggedInUser") || localStorage.getItem("loggedInHospital");
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                const token = user.token || user.jwt || user.accessToken;
+                if (token && String(token).trim() !== "") {
+                    return String(token).trim();
+                }
+            } catch (error) {
+                console.error("Unable to read token:", error);
+            }
+        }
+        return null;
+    }
+
+    function getSelectedHospital() {
+        const savedHospital = localStorage.getItem("loggedInHospital") || localStorage.getItem("hospital");
+        if (savedHospital) {
+            try {
+                return JSON.parse(savedHospital);
+            } catch (error) {
+                console.error("Unable to parse hospital:", error);
+            }
+        }
+        return null;
+    }
+
+    function getHospitalId(hospital) {
+        if (!hospital) return null;
+        const id = hospital.id ?? hospital.hospitalId;
+        return (id !== null && id !== undefined && String(id).trim() !== "") ? id : null;
+    }
+
+    function displayHospital(data) {
+        if (!data) return;
+
+        const setField = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = value || "-";
+                el.classList.remove("loading");
+            }
+        };
+
+        setField("hospitalId", data.hospitalId ?? data.id);
+        setField("hospitalName", data.name ?? data.hospitalName);
+        setField("hospitalLocation", data.location ?? data.address);
+        setField("hospitalType", data.type ?? data.hospitalType);
+        setField("emergencyContact", data.emergencyContact ?? data.emergencyNumber ?? data.phone);
+        setField("hospitalFacilities", data.facilities ?? data.hospitalFacilities ?? "Not specified");
+
+        const availableElement = document.getElementById("hospitalAvailable");
+        if (availableElement) {
+            const available = String(data.available ?? data.hospitalAvailable ?? "").toLowerCase();
+            if (available === "true" || available === "yes" || available === "available") {
+                availableElement.textContent = "Available";
+                availableElement.className = "info-value status available";
+            } else {
+                availableElement.textContent = "Not Available";
+                availableElement.className = "info-value status unavailable";
+            }
+        }
+    }
+
+    async function loadHospitalInformation() {
+        const message = document.getElementById("informationMessage");
+        const savedHospital = getSelectedHospital();
+
+        if (!savedHospital) {
+            message.textContent = "Hospital information not found in session.";
+            message.className = "message error-message";
+            displayHospital({ hospitalId: "-", name: "Unavailable", location: "-", type: "-", emergencyContact: "-", facilities: "Not available", available: false });
+            return;
+        }
+
+        displayHospital(savedHospital);
+        const hospitalId = getHospitalId(savedHospital);
+        const token = getHospitalInformationToken();
+
+        if (!hospitalId || !token) {
+            message.textContent = "Displaying saved offline hospital information.";
+            message.className = "message warning-message";
+            return;
+        }
+
+        try {
+            message.textContent = "Loading latest hospital information...";
+            message.className = "message";
+
+            const response = await fetch(`${HOSPITAL_API_URL}/${encodeURIComponent(hospitalId)}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                message.textContent = "Displaying cached hospital data. Server rejected update.";
+                message.className = "message warning-message";
+                return;
+            }
+
+            const data = await response.json();
+            if (data) {
+                displayHospital(data);
+                localStorage.setItem("loggedInHospital", JSON.stringify(data));
+                message.textContent = "Hospital information updated live.";
+                message.className = "message success-message";
+            }
+        } catch (error) {
+            console.error("Error fetching live data:", error);
+            message.textContent = "Displaying cached hospital details.";
+            message.className = "message warning-message";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        loadHospitalInformation();
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Doctor Dashboard - HealthConnect</title>
+
+    <link rel="stylesheet"
+          href="../Css/doctor.css">
+
+</head>
+
+
+<body>
+
+
+<div class="doctor-container">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="doctor-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                Doctor Dashboard
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            onclick="logoutDoctor()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="doctor-content">
+
+
+        <!-- =================================================
+             WELCOME
+             ================================================= -->
+
+        <h2 id="doctorWelcome">
+
+            Welcome Doctor
+
+        </h2>
+
+
+        <p>
+
+            Manage consultations, prescriptions
+            and healthcare services.
+
+        </p>
+
+
+
+        <!-- =================================================
+             DOCTOR PROFILE
+             ================================================= -->
+
+        <section class="doctor-profile-section">
+
+            <h2>
+
+                My Profile
+
+            </h2>
+
+
+            <div id="doctorProfile">
+
+                <p>
+
+                    Loading doctor profile...
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DOCTOR SERVICES
+             ================================================= -->
+
+        <div class="doctor-cards">
+
+
+            <!-- =================================================
+                 REGISTERED DOCTORS
+                 ================================================= -->
+
+            <div class="doctor-card">
+
+                <h3>
+
+                    👨‍⚕️ Registered Doctors
+
+                </h3>
+
+
+                <p>
+
+                    View doctors registered
+                    with HealthConnect.
+
+                </p>
+
+
+                <button
+                    type="button"
+                    onclick="loadDoctors()">
+
+                    View Doctors
+
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CONSULTATIONS
+                 ================================================= -->
+
+            <div class="doctor-card">
+
+                <h3>
+
+                    📋 Consultations
+
+                </h3>
+
+
+                <p>
+
+                    Manage patient consultation
+                    requests and provide assistance.
+
+                </p>
+
+
+                <a href="consultation.html">
+
+                    Open Consultation
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PATIENTS
+                 ================================================= -->
+
+            <div class="doctor-card">
+
+                <h3>
+
+                    👥 Patients
+
+                </h3>
+
+
+                <p>
+
+                    View patients associated with your
+                    consultations and manage patient information.
+
+                </p>
+
+
+                <a href="patient.html">
+
+                    Open Patients
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PRESCRIPTIONS
+                 ================================================= -->
+
+            <div class="doctor-card">
+
+                <h3>
+
+                    💊 Prescriptions
+
+                </h3>
+
+
+                <p>
+
+                    Create prescriptions for patients
+                    using medicines available in HealthConnect.
+
+                </p>
+
+
+                <a href="prescription.html">
+
+                    Open Prescriptions
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 MEDICINE STOCK
+                 ================================================= -->
+
+            <div class="doctor-card">
+
+                <h3>
+
+                    🏥 Medicine Stock
+
+                </h3>
+
+
+                <p>
+
+                    Check currently available medicines
+                    at a government hospital.
+
+                </p>
+
+
+                <a href="medicine-stock-view.html">
+
+                    Check Medicine Stock
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =====================================================
+             REGISTERED DOCTORS
+             ===================================================== -->
+
+        <section class="doctor-list-section">
+
+
+            <h2>
+
+                Registered Doctors
+
+            </h2>
+
+
+
+            <!-- =================================================
+                 DOCTOR SEARCH
+                 ================================================= -->
+
+            <div class="doctor-filters">
+
+
+                <input
+                    type="text"
+                    id="doctorSearch"
+                    placeholder="Search by Doctor Name, Doctor ID or Specialization..."
+                    oninput="filterDoctors()"
+                    autocomplete="off">
+
+
+                <button
+                    type="button"
+                    onclick="loadDoctors()">
+
+                    View All Doctors
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DOCTOR LIST
+                 ================================================= -->
+
+            <div id="doctorList">
+
+                <p>
+
+                    Click "View All Doctors" to load
+                    registered doctors.
+
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script src="doctor.js"></script>
+
+
+</body>
+
+</html>

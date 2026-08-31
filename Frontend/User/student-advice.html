@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Student Health Guidance - HealthConnect</title>
+
+    <link rel="stylesheet"
+          href="../Css/main.css">
+
+    <link rel="stylesheet"
+          href="../Css/dashboard.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>HealthConnect</h1>
+
+            <p>
+                Medical Student Guidance
+            </p>
+
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logoutUser()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+    <main class="dashboard-content">
+
+
+        <div class="dashboard-title">
+
+            <h2>
+                Ask for Basic Health Guidance
+            </h2>
+
+            <p>
+                Submit your health problem to an available
+                medical student for basic guidance.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <h3>
+                Describe Your Problem
+            </h3>
+
+
+            <form id="adviceForm">
+
+
+                <div style="margin-top:15px;">
+
+                    <label>
+                        Your Problem
+                    </label>
+
+                    <textarea
+                        id="problem"
+                        required
+                        placeholder="Describe your health problem..."
+                        rows="6"
+                        style="
+                            width:100%;
+                            padding:12px;
+                            margin-top:8px;
+                            border:1px solid #d1d5db;
+                            border-radius:7px;
+                            resize:vertical;
+                        ">
+                    </textarea>
+
+                </div>
+
+
+                <div style="margin-top:15px;">
+
+                    <label>
+                        Guidance Type
+                    </label>
+
+                    <select
+                        id="adviceType"
+                        style="
+                            width:100%;
+                            padding:12px;
+                            margin-top:8px;
+                            border:1px solid #d1d5db;
+                            border-radius:7px;
+                        ">
+
+                        <option value="GENERAL_GUIDANCE">
+                            General Health Guidance
+                        </option>
+
+                        <option value="FIRST_AID">
+                            Basic First Aid
+                        </option>
+
+                        <option value="HEALTH_EDUCATION">
+                            Health Education
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="dashboard-btn"
+                    style="margin-top:20px;">
+
+                    Submit Request
+
+                </button>
+
+            </form>
+
+
+            <p
+                id="message"
+                style="margin-top:15px;">
+            </p>
+
+        </div>
+
+
+        <div
+            class="dashboard-card"
+            style="margin-top:25px;">
+
+            <h3>
+                My Requests
+            </h3>
+
+
+            <button
+                class="dashboard-btn"
+                onclick="loadMyAdvice()">
+
+                Refresh Requests
+
+            </button>
+
+
+            <div
+                id="myAdviceContainer"
+                style="margin-top:20px;">
+
+                Loading requests...
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+<script src="../Js/user.js"></script>
+
+<script src="../Js/student-advice.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Facilities - HealthConnect</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+
+        .page-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: #1e3a8a;
+        }
+
+        .facility-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .facility {
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .facility h3 {
+            margin-top: 0;
+            color: #1e3a8a;
+        }
+
+        .facility p {
+            color: #4b5563;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="page-container">
+
+        <a
+            href="dashboard.html"
+            class="back-btn"
+        >
+            ← Back to Hospital Dashboard
+        </a>
+
+
+        <div class="card">
+
+            <h1>Hospital Facilities</h1>
+
+            <p>
+                Facilities and services available at this hospital.
+            </p>
+
+
+            <div
+                id="facilityGrid"
+                class="facility-grid"
+            >
+
+                <div class="facility">
+                    <h3>Emergency</h3>
+                    <p>Emergency medical services available.</p>
+                </div>
+
+                <div class="facility">
+                    <h3>Pharmacy</h3>
+                    <p>Medicines available at hospital pharmacy.</p>
+                </div>
+
+                <div class="facility">
+                    <h3>Laboratory</h3>
+                    <p>Basic laboratory testing facilities.</p>
+                </div>
+
+                <div class="facility">
+                    <h3>OPD</h3>
+                    <p>Outpatient department services available.</p>
+                </div>
+
+            </div>
+
+
+            <div
+                id="facilityMessage"
+                class="message"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const HOSPITAL_API_URL =
+            "http://localhost:8080/api/hospitals";
+
+
+        function getHospital() {
+
+            const hospital =
+                localStorage.getItem(
+                    "loggedInHospital"
+                );
+
+
+            if (!hospital) {
+                return null;
+            }
+
+
+            try {
+
+                return JSON.parse(hospital);
+
+            }
+
+            catch (error) {
+
+                return null;
+
+            }
+
+        }
+
+
+        async function loadFacilities() {
+
+            const hospital =
+                getHospital();
+
+
+            const message =
+                document.getElementById(
+                    "facilityMessage"
+                );
+
+
+            if (!hospital) {
+
+                message.textContent =
+                    "Hospital login information not found.";
+
+                message.style.color =
+                    "#dc2626";
+
+                return;
+
+            }
+
+
+            const hospitalId =
+                hospital.hospitalId ||
+                hospital.id;
+
+
+            if (!hospitalId) {
+
+                message.textContent =
+                    "Hospital ID not found.";
+
+                message.style.color =
+                    "#dc2626";
+
+                return;
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${HOSPITAL_API_URL}/${hospitalId}/facilities`
+                    );
+
+
+                if (!response.ok) {
+                    return;
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !data ||
+                    (Array.isArray(data) &&
+                    data.length === 0)
+                ) {
+
+                    return;
+
+                }
+
+
+                const facilityGrid =
+                    document.getElementById(
+                        "facilityGrid"
+                    );
+
+
+                facilityGrid.innerHTML = "";
+
+
+                if (Array.isArray(data)) {
+
+                    data.forEach(function(facility) {
+
+                        const div =
+                            document.createElement("div");
+
+                        div.className =
+                            "facility";
+
+
+                        div.innerHTML = `
+                            <h3>
+                                ${facility.name || facility.facilityName || "Facility"}
+                            </h3>
+
+                            <p>
+                                ${facility.description || "Available at this hospital."}
+                            </p>
+                        `;
+
+
+                        facilityGrid.appendChild(div);
+
+                    });
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.log(
+                    "Facilities API not available:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        loadFacilities();
+
+    </script>
+
+</body>
+</html>

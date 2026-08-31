@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>HealthConnect - Government Dashboard</title>
+
+    <link rel="stylesheet"
+          href="../css/dashboard.css">
+
+    <link rel="stylesheet"
+          href="admin.css">
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     MAIN DASHBOARD
+===================================================== -->
+
+<div class="admin-dashboard">
+
+
+    <!-- =================================================
+         SIDEBAR
+    ================================================== -->
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+
+            <div class="logo-icon">
+                HC
+            </div>
+
+            <div>
+                <h2>HealthConnect</h2>
+                <span>Government Portal</span>
+            </div>
+
+        </div>
+
+
+        <nav class="admin-nav">
+
+            <button
+                class="nav-item active"
+                data-section="overview">
+
+                📊
+                <span>Overview</span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="patients">
+
+                👥
+                <span>Patients</span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="doctors">
+
+                👨‍⚕️
+                <span>Doctors</span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="hospitals">
+
+                🏥
+                <span>Hospitals</span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="appointments">
+
+                📅
+                <span>Appointments</span>
+
+            </button>
+
+
+            <button
+                class="nav-item"
+                data-section="tests">
+
+                🧪
+                <span>Medical Tests</span>
+
+            </button>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <button
+                class="logout-sidebar"
+                onclick="adminLogout()">
+
+                🚪 Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =================================================
+         MAIN CONTENT
+    ================================================== -->
+
+    <main class="admin-main">
+
+
+        <!-- HEADER -->
+
+        <header class="admin-header">
+
+            <div>
+
+                <h1 id="pageTitle">
+                    Government Dashboard
+                </h1>
+
+                <p id="pageSubtitle">
+                    HealthConnect system overview
+                </p>
+
+            </div>
+
+
+            <div class="admin-user">
+
+                <div class="admin-avatar">
+                    A
+                </div>
+
+                <div>
+
+                    <strong id="adminName">
+                        Administrator
+                    </strong>
+
+                    <span>
+                        Government Admin
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             OVERVIEW
+        ================================================== -->
+
+        <section
+            id="overview"
+            class="admin-section active">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>System Overview</h2>
+
+                    <p>
+                        Live statistics from HealthConnect
+                    </p>
+
+                </div>
+
+                <button
+                    class="refresh-btn"
+                    onclick="loadDashboardData()">
+
+                    🔄 Refresh
+
+                </button>
+
+            </div>
+
+
+
+            <!-- STATISTICS -->
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        👥
+                    </div>
+
+                    <div>
+
+                        <span>Total Patients</span>
+
+                        <strong id="totalPatients">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        👨‍⚕️
+                    </div>
+
+                    <div>
+
+                        <span>Total Doctors</span>
+
+                        <strong id="totalDoctors">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🏥
+                    </div>
+
+                    <div>
+
+                        <span>Total Hospitals</span>
+
+                        <strong id="totalHospitals">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        📅
+                    </div>
+
+                    <div>
+
+                        <span>Appointments</span>
+
+                        <strong id="totalAppointments">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🧪
+                    </div>
+
+                    <div>
+
+                        <span>Medical Tests</span>
+
+                        <strong id="totalTests">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🟢
+                    </div>
+
+                    <div>
+
+                        <span>Available Doctors</span>
+
+                        <strong id="availableDoctors">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🟢
+                    </div>
+
+                    <div>
+
+                        <span>Available Hospitals</span>
+
+                        <strong id="availableHospitals">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🧪
+                    </div>
+
+                    <div>
+
+                        <span>Available Tests</span>
+
+                        <strong id="availableTests">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- QUICK INFORMATION -->
+
+            <div class="overview-grid">
+
+
+                <div class="admin-panel">
+
+                    <div class="panel-header">
+
+                        <h3>System Status</h3>
+
+                        <span class="status-online">
+                            ● Online
+                        </span>
+
+                    </div>
+
+                    <p>
+                        HealthConnect backend is being used
+                        as the central data source for this
+                        government dashboard.
+                    </p>
+
+                </div>
+
+
+
+                <div class="admin-panel">
+
+                    <div class="panel-header">
+
+                        <h3>Data Source</h3>
+
+                    </div>
+
+                    <p>
+                        Live data is loaded through
+                        Spring Boot REST APIs connected
+                        with MySQL.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             PATIENTS
+        ================================================== -->
+
+        <section
+            id="patients"
+            class="admin-section">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>Patient Management</h2>
+
+                    <p>
+                        View registered patients and hospital
+                        associations.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="toolbar">
+
+                <input
+                    type="text"
+                    id="patientSearch"
+                    placeholder="Search patients..."
+                    oninput="filterPatients()">
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Username</th>
+                            <th>Hospital</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="patientsTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             DOCTORS
+        ================================================== -->
+
+        <section
+            id="doctors"
+            class="admin-section">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>Doctor Management</h2>
+
+                    <p>
+                        Monitor registered doctors and
+                        their availability.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="toolbar">
+
+                <input
+                    type="text"
+                    id="doctorSearch"
+                    placeholder="Search doctors..."
+                    oninput="filterDoctors()">
+
+
+                <select
+                    id="doctorTypeFilter"
+                    onchange="filterDoctors()">
+
+                    <option value="">
+                        All Types
+                    </option>
+
+                    <option value="GOVERNMENT">
+                        Government
+                    </option>
+
+                    <option value="PRIVATE">
+                        Private
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Specialization</th>
+                            <th>Qualification</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Availability</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="doctorsTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             HOSPITALS
+        ================================================== -->
+
+        <section
+            id="hospitals"
+            class="admin-section">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>Hospital Management</h2>
+
+                    <p>
+                        Monitor hospitals registered
+                        on HealthConnect.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="toolbar">
+
+                <input
+                    type="text"
+                    id="hospitalSearch"
+                    placeholder="Search hospitals..."
+                    oninput="filterHospitals()">
+
+
+                <select
+                    id="hospitalTypeFilter"
+                    onchange="filterHospitals()">
+
+                    <option value="">
+                        All Types
+                    </option>
+
+                    <option value="GOVERNMENT">
+                        Government
+                    </option>
+
+                    <option value="PRIVATE">
+                        Private
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Database ID</th>
+                            <th>Hospital ID</th>
+                            <th>Name</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                            <th>Emergency Contact</th>
+                            <th>Availability</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="hospitalsTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             APPOINTMENTS
+        ================================================== -->
+
+        <section
+            id="appointments"
+            class="admin-section">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>Appointment Monitoring</h2>
+
+                    <p>
+                        Monitor appointments across
+                        the HealthConnect system.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="toolbar">
+
+                <input
+                    type="text"
+                    id="appointmentSearch"
+                    placeholder="Search appointments..."
+                    oninput="filterAppointments()">
+
+
+                <select
+                    id="appointmentStatusFilter"
+                    onchange="filterAppointments()">
+
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option value="PENDING">
+                        Pending
+                    </option>
+
+                    <option value="CONFIRMED">
+                        Confirmed
+                    </option>
+
+                    <option value="COMPLETED">
+                        Completed
+                    </option>
+
+                    <option value="CANCELLED">
+                        Cancelled
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Doctor ID</th>
+                            <th>Hospital ID</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reason</th>
+                            <th>Type</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="appointmentsTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MEDICAL TESTS
+        ================================================== -->
+
+        <section
+            id="tests"
+            class="admin-section">
+
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h2>Medical Test Monitoring</h2>
+
+                    <p>
+                        Monitor medical tests registered
+                        by hospitals.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="toolbar">
+
+                <input
+                    type="text"
+                    id="testSearch"
+                    placeholder="Search medical tests..."
+                    oninput="filterTests()">
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Hospital ID</th>
+                            <th>Test Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Sample</th>
+                            <th>Report Time</th>
+                            <th>Available</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="testsTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<!-- =====================================================
+     ASSIGN HOSPITAL MODAL
+===================================================== -->
+
+<div
+    id="hospitalModal"
+    class="modal-overlay">
+
+
+    <div class="modal-box">
+
+        <button
+            class="modal-close"
+            onclick="closeHospitalModal()">
+
+            ×
+
+        </button>
+
+
+        <h2>
+            Assign Patient to Hospital
+        </h2>
+
+
+        <p id="selectedPatientName">
+        </p>
+
+
+        <input
+            type="text"
+            id="hospitalNameInput"
+            placeholder="Enter hospital name">
+
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-cancel"
+                onclick="closeHospitalModal()">
+
+                Cancel
+
+            </button>
+
+
+            <button
+                class="modal-save"
+                onclick="assignHospital()">
+
+                Assign Hospital
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script src="admin.js"></script>
+
+</body>
+
+</html>

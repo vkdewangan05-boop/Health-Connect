@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Patient Guidance - HealthConnect</title>
+
+    <link rel="stylesheet"
+          href="../Css/main.css">
+
+    <link rel="stylesheet"
+          href="../Css/dashboard.css">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>HealthConnect</h1>
+
+            <p>
+                My Student Guidance
+            </p>
+
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logoutUser()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+    <main class="dashboard-content">
+
+        <div class="dashboard-title">
+
+            <h2>
+                My Health Guidance
+            </h2>
+
+            <p>
+                View guidance received from medical students.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <button
+                class="dashboard-btn"
+                onclick="loadPatientGuidance()">
+
+                Refresh Guidance
+
+            </button>
+
+
+            <div
+                id="guidanceContainer"
+                style="margin-top:20px;">
+
+                Loading guidance...
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script src="../Js/user.js"></script>
+
+<script src="../Js/patient-guidance.js"></script>
+
+</body>
+
+</html>

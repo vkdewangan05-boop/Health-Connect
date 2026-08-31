@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>My Medicines - HealthConnect</title>
+
+    <link
+        rel="stylesheet"
+        href="../Css/main.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../Css/dashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../Css/response.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                My Medicines
+            </p>
+
+        </div>
+
+
+        <button
+            class="logout-btn"
+            type="button"
+            onclick="logoutUser()"
+        >
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="dashboard-content">
+
+
+        <div class="dashboard-title">
+
+            <h2>
+                My Medicines
+            </h2>
+
+            <p>
+                View medicines prescribed during your consultations.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             MEDICINE CONTAINER
+             ================================================= -->
+
+        <div
+            id="medicineContainer"
+            style="margin-top:25px;"
+        >
+
+            <p>
+                Loading medicines...
+            </p>
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script src="../Js/user.js"></script>
+
+
+<script>
+
+
+// =====================================================
+// HEALTHCONNECT API
+// =====================================================
+
+const API_URL =
+    "http://localhost:8080";
+
+
+
+// =====================================================
+// GET LOGGED-IN USER
+// =====================================================
+
+let loggedInUser = null;
+
+
+function getLoggedInUser() {
+
+    const storedUser =
+        localStorage.getItem(
+            "loggedInUser"
+        );
+
+
+    if (!storedUser) {
+
+        return null;
+
+    }
+
+
+    try {
+
+        return JSON.parse(
+            storedUser
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Unable to read logged-in user:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+
+// =====================================================
+// GET AUTH TOKEN
+// =====================================================
+
+function getAuthToken() {
+
+    const tokenKeys = [
+
+        "token",
+
+        "jwt",
+
+        "accessToken",
+
+        "authToken",
+
+        "jwtToken"
+
+    ];
+
+
+    for (
+        const key of tokenKeys
+    ) {
+
+        const token =
+            localStorage.getItem(
+                key
+            );
+
+
+        if (
+            token &&
+            token.trim() !== ""
+        ) {
+
+            return token.trim();
+
+        }
+
+    }
+
+
+    // -------------------------------------------------
+    // TOKEN MAY BE INSIDE loggedInUser
+    // -------------------------------------------------
+
+    const storedUser =
+        localStorage.getItem(
+            "loggedInUser"
+        );
+
+
+    if (storedUser) {
+
+        try {
+
+            const user =
+                JSON.parse(
+                    storedUser
+                );
+
+
+            const token =
+                user.token ||
+                user.jwt ||
+                user.accessToken ||
+                user.authToken ||
+                user.jwtToken;
+
+
+            if (
+                token &&
+                String(token).trim() !== ""
+            ) {
+
+                return String(
+                    token
+                ).trim();
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Unable to read token:",
+                error
+            );
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+
+// =====================================================
+// AUTHENTICATED FETCH
+// =====================================================
+
+async function authenticatedFetch(
+    url,
+    options = {}
+) {
+
+    const requestOptions = {
+        ...options
+    };
+
+
+    requestOptions.headers = {
+
+        ...(options.headers || {})
+
+    };
+
+
+    const token =
+        getAuthToken();
+
+
+    /*
+     * Do not automatically destroy the login session
+     * if token is unavailable.
+     */
+
+    if (token) {
+
+        requestOptions.headers[
+            "Authorization"
+        ] =
+            "Bearer " + token;
+
+    }
+
+
+    if (
+        requestOptions.body &&
+        !(requestOptions.body instanceof FormData)
+    ) {
+
+        requestOptions.headers[
+            "Content-Type"
+        ] =
+            "application/json";
+
+    }
+
+
+    console.log(
+        "Medicines API:",
+        url
+    );
+
+
+    console.log(
+        "JWT available:",
+        !!token
+    );
+
+
+    const response =
+        await window.fetch(
+            url,
+            requestOptions
+        );
+
+
+    /*
+     * Do not redirect to login automatically.
+     * The page will display the actual error.
+     */
+
+    return response;
+
+}
+
+
+
+// =====================================================
+// ESCAPE HTML
+// =====================================================
+
+function escapeHTML(
+    value
+) {
+
+    return String(
+        value ?? ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+
+
+// =====================================================
+// LOAD PATIENT PRESCRIPTIONS
+// =====================================================
+
+async function loadMyMedicines() {
+
+    const container =
+        document.getElementById(
+            "medicineContainer"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    loggedInUser =
+        getLoggedInUser();
+
+
+    // -------------------------------------------------
+    // USER LOGIN CHECK
+    // -------------------------------------------------
+
+    if (!loggedInUser) {
+
+        container.innerHTML = `
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Login Required
+                </h3>
+
+                <p>
+                    Please login to view your prescribed medicines.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    // -------------------------------------------------
+    // USER ID CHECK
+    // -------------------------------------------------
+
+    const userId =
+        loggedInUser.id;
+
+
+    if (
+        userId === null ||
+        userId === undefined ||
+        userId === ""
+    ) {
+
+        container.innerHTML = `
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Patient Information Unavailable
+                </h3>
+
+                <p>
+                    Your patient ID could not be found.
+                    Please login again.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = `
+
+        <p>
+            Loading your prescriptions and medicines...
+        </p>
+
+    `;
+
+
+    try {
+
+
+        // =================================================
+        // STEP 1
+        // GET ALL PRESCRIPTIONS OF THIS PATIENT
+        // =================================================
+
+        const prescriptionResponse =
+            await authenticatedFetch(
+
+                API_URL +
+                "/api/prescriptions/user/" +
+                encodeURIComponent(
+                    userId
+                )
+
+            );
+
+
+        const prescriptionText =
+            await prescriptionResponse.text();
+
+
+        if (!prescriptionResponse.ok) {
+
+            throw new Error(
+
+                prescriptionText ||
+                "Unable to load your prescriptions."
+
+            );
+
+        }
+
+
+        let prescriptions = [];
+
+
+        try {
+
+            prescriptions =
+                JSON.parse(
+                    prescriptionText
+                );
+
+        }
+
+        catch (error) {
+
+            prescriptions = [];
+
+        }
+
+
+        if (
+            !Array.isArray(
+                prescriptions
+            ) ||
+            prescriptions.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="dashboard-card">
+
+                    <h3>
+                        No Prescriptions
+                    </h3>
+
+                    <p>
+                        No prescription has been issued
+                        for your consultations yet.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+
+        // =================================================
+        // STEP 2
+        // LOAD MEDICINES FOR EACH PRESCRIPTION
+        // =================================================
+
+        const prescriptionData = [];
+
+
+        for (
+            const prescription
+            of prescriptions
+        ) {
+
+            if (
+                !prescription ||
+                !prescription.id
+            ) {
+
+                continue;
+
+            }
+
+
+            let medicines = [];
+
+
+            try {
+
+                const medicineResponse =
+                    await authenticatedFetch(
+
+                        API_URL +
+                        "/api/prescription-medicines/prescription/" +
+                        encodeURIComponent(
+                            prescription.id
+                        )
+
+                    );
+
+
+                const medicineText =
+                    await medicineResponse.text();
+
+
+                if (
+                    medicineResponse.ok
+                ) {
+
+                    try {
+
+                        medicines =
+                            JSON.parse(
+                                medicineText
+                            );
+
+                    }
+
+                    catch (error) {
+
+                        medicines = [];
+
+                    }
+
+                }
+
+                else {
+
+                    console.warn(
+
+                        "Unable to load medicines for prescription:",
+                        prescription.id,
+                        medicineText
+
+                    );
+
+                    medicines = [];
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+
+                    "Medicine loading error for prescription:",
+                    prescription.id,
+                    error
+
+                );
+
+                medicines = [];
+
+            }
+
+
+            prescriptionData.push({
+
+                prescription:
+                    prescription,
+
+                medicines:
+                    Array.isArray(
+                        medicines
+                    )
+                    ? medicines
+                    : []
+
+            });
+
+        }
+
+
+
+        // =================================================
+        // STEP 3
+        // DISPLAY DATA
+        // =================================================
+
+        displayPrescriptionMedicines(
+            prescriptionData
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "My Medicines Error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Unable to Load Medicines
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        error.message ||
+                        "Unable to load prescription information."
+                    )}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+// =====================================================
+// DISPLAY PRESCRIPTIONS + MEDICINES
+// =====================================================
+
+function displayPrescriptionMedicines(
+    prescriptionData
+) {
+
+    const container =
+        document.getElementById(
+            "medicineContainer"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    // -------------------------------------------------
+    // CHECK WHETHER ANY PRESCRIPTION EXISTS
+    // -------------------------------------------------
+
+    if (
+        !Array.isArray(
+            prescriptionData
+        ) ||
+        prescriptionData.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="dashboard-card">
+
+                <h3>
+                    No Prescriptions
+                </h3>
+
+                <p>
+                    No prescription has been issued
+                    for your consultations yet.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+
+    // -------------------------------------------------
+    // PAGE HEADING
+    // -------------------------------------------------
+
+    const heading =
+        document.createElement(
+            "div"
+        );
+
+
+    heading.className =
+        "dashboard-card";
+
+
+    heading.innerHTML = `
+
+        <h3>
+            Prescribed Medicines
+        </h3>
+
+        <p>
+            Medicines are shown consultation-wise
+            from your prescriptions.
+        </p>
+
+    `;
+
+
+    container.appendChild(
+        heading
+    );
+
+
+
+    // -------------------------------------------------
+    // DISPLAY EACH PRESCRIPTION
+    // -------------------------------------------------
+
+    prescriptionData.forEach(
+        function(data) {
+
+
+            const prescription =
+                data.prescription;
+
+
+            const medicines =
+                data.medicines;
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "dashboard-card";
+
+
+            const prescriptionId =
+                prescription.id;
+
+
+            const consultationId =
+                prescription.consultationId ||
+                "N/A";
+
+
+            const diagnosis =
+                prescription.diagnosis ||
+                "N/A";
+
+
+            const instructions =
+                prescription.instructions ||
+                "N/A";
+
+
+            const prescriptionDate =
+                prescription.prescriptionDate ||
+                "N/A";
+
+
+            const prescriptionStatus =
+                prescription.status ||
+                "N/A";
+
+
+
+            // -------------------------------------------------
+            // PRESCRIPTION HEADER
+            // -------------------------------------------------
+
+            let html = `
+
+                <h3>
+
+                    Prescription #${escapeHTML(
+                        prescriptionId
+                    )}
+
+                </h3>
+
+
+                <p>
+
+                    <strong>
+                        Consultation ID:
+                    </strong>
+
+                    ${escapeHTML(
+                        consultationId
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Diagnosis:
+                    </strong>
+
+                    ${escapeHTML(
+                        diagnosis
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Doctor Instructions:
+                    </strong>
+
+                    ${escapeHTML(
+                        instructions
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Prescription Date:
+                    </strong>
+
+                    ${escapeHTML(
+                        prescriptionDate
+                    )}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Prescription Status:
+                    </strong>
+
+                    ${escapeHTML(
+                        prescriptionStatus
+                    )}
+
+                </p>
+
+
+                <hr
+                    style="
+                        margin:20px 0;
+                        border:none;
+                        border-top:1px solid #e5e7eb;
+                    "
+                >
+
+            `;
+
+
+
+            // -------------------------------------------------
+            // NO MEDICINE CASE
+            // -------------------------------------------------
+
+            if (
+                !Array.isArray(
+                    medicines
+                ) ||
+                medicines.length === 0
+            ) {
+
+                html += `
+
+                    <div
+                        style="
+                            margin-top:10px;
+                            padding:15px;
+                            border-radius:8px;
+                            background:#f9fafb;
+                        "
+                    >
+
+                        <strong>
+                            Medicines:
+                        </strong>
+
+                        <p
+                            style="
+                                margin-top:8px;
+                            "
+                        >
+
+                            No medicines prescribed
+                            for this consultation.
+
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+
+
+            // -------------------------------------------------
+            // MEDICINES EXIST
+            // -------------------------------------------------
+
+            else {
+
+                html += `
+
+                    <h4
+                        style="
+                            margin-top:10px;
+                            margin-bottom:12px;
+                        "
+                    >
+
+                        Medicines Prescribed
+
+                    </h4>
+
+                `;
+
+
+                medicines.forEach(
+                    function(medicine) {
+
+
+                        html += `
+
+                            <div
+                                style="
+                                    margin-top:10px;
+                                    padding:15px;
+                                    border:1px solid #e5e7eb;
+                                    border-radius:10px;
+                                "
+                            >
+
+
+                                <p>
+
+                                    <strong>
+                                        Medicine:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        medicine.medicineName ||
+                                        "N/A"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Medicine ID:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        medicine.medicineId ||
+                                        "N/A"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Dosage:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        medicine.dosage ||
+                                        "N/A"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Frequency:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        medicine.frequency ||
+                                        "N/A"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Duration:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        medicine.duration ||
+                                        "N/A"
+                                    )}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Instructions:
+                                    </strong>
+
+                                    ${escapeHTML(
+                                        medicine.instructions ||
+                                        "N/A"
+                                    )}
+
+                                </p>
+
+
+                            </div>
+
+                        `;
+
+                    }
+                );
+
+            }
+
+
+
+            card.innerHTML =
+                html;
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+
+// =====================================================
+// START
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadMyMedicines();
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>

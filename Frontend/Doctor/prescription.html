@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Prescription Management - HealthConnect</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 22px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            background: #1d4ed8;
+            padding: 10px 15px;
+            border-radius: 7px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,.08);
+        }
+
+        h2 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input,
+        textarea,
+        select {
+
+            width: 100%;
+            padding: 12px;
+
+            border:
+                1px solid #d1d5db;
+
+            border-radius: 7px;
+
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+
+            background: #2563eb;
+            color: white;
+
+            border: none;
+
+            padding: 12px 20px;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-size: 15px;
+        }
+
+        button:hover {
+            opacity: .9;
+        }
+
+        .secondary-btn {
+            background: #64748b;
+        }
+
+        .danger-btn {
+            background: #dc2626;
+        }
+
+        /* ==========================================
+           MEDICINE SEARCH
+           ========================================== */
+
+        .medicine-search-container {
+            position: relative;
+        }
+
+        .medicine-search-container input {
+            width: 100%;
+        }
+
+        .search-hint {
+            margin-top: 7px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .search-results {
+
+            position: absolute;
+
+            top: 100%;
+
+            left: 0;
+
+            right: 0;
+
+            background: white;
+
+            border:
+                1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            margin-top: 5px;
+
+            max-height: 300px;
+
+            overflow-y: auto;
+
+            z-index: 1000;
+
+            box-shadow:
+                0 5px 15px rgba(0,0,0,.12);
+        }
+
+        .medicine-result {
+
+            padding: 13px 15px;
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            cursor: pointer;
+
+            transition: background .2s;
+        }
+
+        .medicine-result:last-child {
+            border-bottom: none;
+        }
+
+        .medicine-result:hover {
+            background: #eff6ff;
+        }
+
+        .medicine-result strong {
+            color: #1d4ed8;
+            font-size: 16px;
+        }
+
+        .medicine-result small {
+            display: block;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .search-message {
+
+            padding: 15px;
+
+            color: #64748b;
+
+            text-align: center;
+        }
+
+        /* ==========================================
+           SELECTED MEDICINE
+           ========================================== */
+
+        .selected-medicine {
+
+            border:
+                1px solid #cbd5e1;
+
+            border-radius: 9px;
+
+            padding: 20px;
+
+            margin-top: 18px;
+
+            background: #f8fafc;
+        }
+
+        .selected-medicine h3 {
+
+            margin-top: 0;
+
+            color: #2563eb;
+        }
+
+        .medicine-list-item {
+
+            border:
+                1px solid #ddd;
+
+            border-radius: 9px;
+
+            padding: 18px;
+
+            margin-top: 12px;
+
+            background: #fafafa;
+        }
+
+        .medicine-list-item h3 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+
+        .message {
+
+            margin-top: 12px;
+
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .info {
+            color: #475569;
+        }
+
+        .loading {
+            color: #2563eb;
+            padding: 12px;
+        }
+
+        .doctor-field {
+            background: #f1f5f9;
+        }
+
+        .empty-message {
+            padding: 15px;
+            color: #64748b;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div>
+
+        <h1>
+            HealthConnect
+        </h1>
+
+        <p>
+            Prescription Management
+        </p>
+
+    </div>
+
+
+    <a href="doctor-dashboard.html">
+        Dashboard
+    </a>
+
+</header>
+
+
+
+<div class="container">
+
+
+    <!-- ==========================================
+         CREATE PRESCRIPTION
+         ========================================== -->
+
+    <div class="card">
+
+        <h2>
+            Create Prescription
+        </h2>
+
+
+        <form id="prescriptionForm">
+
+
+            <!-- PATIENT ID -->
+
+            <div class="form-group">
+
+                <label>
+                    Patient ID
+                </label>
+
+                <input
+                    type="number"
+                    id="userId"
+                    placeholder="Enter Patient ID"
+                    required>
+
+            </div>
+
+
+            <!-- DOCTOR ID -->
+
+            <div class="form-group">
+
+                <label>
+                    Doctor ID
+                </label>
+
+                <input
+                    type="number"
+                    id="doctorId"
+                    class="doctor-field"
+                    placeholder="Doctor ID"
+                    readonly
+                    required>
+
+            </div>
+
+
+            <!-- CONSULTATION ID -->
+
+            <div class="form-group">
+
+                <label>
+                    Consultation ID
+                </label>
+
+                <input
+                    type="number"
+                    id="consultationId"
+                    placeholder="Enter Consultation ID"
+                    required>
+
+            </div>
+
+
+            <!-- DIAGNOSIS -->
+
+            <div class="form-group">
+
+                <label>
+                    Diagnosis
+                </label>
+
+                <textarea
+                    id="diagnosis"
+                    placeholder="Enter diagnosis"
+                    required></textarea>
+
+            </div>
+
+
+            <!-- GENERAL INSTRUCTIONS -->
+
+            <div class="form-group">
+
+                <label>
+                    General Instructions
+                </label>
+
+                <textarea
+                    id="instructions"
+                    placeholder="General advice for the patient"></textarea>
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div class="form-group">
+
+                <label>
+                    Prescription Date
+                </label>
+
+                <input
+                    type="date"
+                    id="prescriptionDate"
+                    required>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="form-group">
+
+                <label>
+                    Status
+                </label>
+
+                <select id="status">
+
+                    <option value="Active">
+                        Active
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
+
+                    <option value="Cancelled">
+                        Cancelled
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+
+
+    <!-- ==========================================
+         MEDICINE SEARCH
+         ========================================== -->
+
+    <div class="card">
+
+        <h2>
+            Add Medicines
+        </h2>
+
+
+        <p class="info">
+
+            Start typing the medicine name.
+            Matching medicines will appear automatically.
+
+        </p>
+
+
+        <div class="medicine-search-container">
+
+            <input
+                type="text"
+                id="medicineSearch"
+                autocomplete="off"
+                placeholder="Start typing medicine name...">
+
+
+            <div
+                id="searchResults"
+                class="search-results"
+                style="display:none;">
+
+            </div>
+
+        </div>
+
+
+        <p class="search-hint">
+            Example: Type "P" → "Pa" → "Par" to find Paracetamol.
+        </p>
+
+
+        <!-- SELECTED MEDICINE -->
+
+        <div id="selectedMedicineContainer">
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==========================================
+         SELECTED MEDICINES
+         ========================================== -->
+
+    <div class="card">
+
+        <h2>
+            Medicines in Prescription
+        </h2>
+
+
+        <div id="selectedMedicinesList">
+
+            <p class="info">
+                No medicines added yet.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==========================================
+         CREATE BUTTON
+         ========================================== -->
+
+    <div class="card">
+
+        <button
+            type="button"
+            onclick="createPrescription()">
+
+            Create Prescription
+
+        </button>
+
+
+        <p
+            id="message"
+            class="message">
+
+        </p>
+
+    </div>
+
+
+
+    <!-- ==========================================
+         ALL PRESCRIPTIONS
+         ========================================== -->
+
+    <div class="card">
+
+        <h2>
+            All Prescriptions
+        </h2>
+
+
+        <button
+            type="button"
+            class="secondary-btn"
+            onclick="loadPrescriptions()">
+
+            Refresh
+
+        </button>
+
+
+        <div id="prescriptionList">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script src="prescription.js"></script>
+
+
+</body>
+
+</html>

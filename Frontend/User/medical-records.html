@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Medical Records - HealthConnect</title>
+
+    <link
+        rel="stylesheet"
+        href="../Css/main.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../Css/dashboard.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../Css/response.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                Medical Records
+            </p>
+
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logoutUser()"
+        >
+            Logout
+        </button>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="dashboard-content">
+
+        <div class="dashboard-title">
+
+            <h2>
+                My Medical Records
+            </h2>
+
+            <p>
+                View your complete consultation history,
+                prescriptions, medicines and medical tests.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             RECORDS CONTAINER
+        ================================================== -->
+
+        <div
+            id="recordsContainer"
+            style="margin-top:25px;"
+        >
+
+            <p>
+                Loading medical records...
+            </p>
+
+        </div>
+
+    </main>
+
+
+</div>
+
+
+
+<script src="../Js/user.js"></script>
+
+
+<script>
+
+/* =========================================================
+   HEALTHCONNECT API
+========================================================= */
+
+const API_URL =
+    "http://localhost:8080";
+
+
+
+/* =========================================================
+   AUTHENTICATION HELPER
+========================================================= */
+
+function hcGetAuthToken() {
+
+    const tokenKeys = [
+        "token",
+        "jwt",
+        "accessToken"
+    ];
+
+
+    for (const key of tokenKeys) {
+
+        const token =
+            localStorage.getItem(key);
+
+
+        if (
+            token &&
+            token.trim() !== ""
+        ) {
+
+            return token.trim();
+
+        }
+
+    }
+
+
+    const storedUser =
+        localStorage.getItem(
+            "loggedInUser"
+        );
+
+
+    if (storedUser) {
+
+        try {
+
+            const user =
+                JSON.parse(
+                    storedUser
+                );
+
+
+            const token =
+                user.token ||
+                user.jwt ||
+                user.accessToken;
+
+
+            if (
+                token &&
+                String(token).trim() !== ""
+            ) {
+
+                return String(token).trim();
+
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "Unable to read authentication data:",
+                error
+            );
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+
+/* =========================================================
+   AUTHENTICATED FETCH
+========================================================= */
+
+async function hcAuthenticatedFetch(
+    url,
+    options = {}
+) {
+
+    const token =
+        hcGetAuthToken();
+
+
+    const requestOptions = {
+        ...options
+    };
+
+
+    requestOptions.headers = {
+        ...(options.headers || {})
+    };
+
+
+    if (
+        requestOptions.body &&
+        !(requestOptions.body instanceof FormData) &&
+        !requestOptions.headers["Content-Type"]
+    ) {
+
+        requestOptions.headers["Content-Type"] =
+            "application/json";
+
+    }
+
+
+    if (token) {
+
+        requestOptions.headers["Authorization"] =
+            "Bearer " + token;
+
+    }
+
+
+    const response =
+        await window.fetch(
+            url,
+            requestOptions
+        );
+
+
+    return response;
+
+}
+
+
+
+/* =========================================================
+   LOGGED-IN USER
+========================================================= */
+
+const storedUser =
+    localStorage.getItem(
+        "loggedInUser"
+    );
+
+
+let user = null;
+
+
+if (!storedUser) {
+
+    alert(
+        "Please login first."
+    );
+
+    window.location.href =
+        "../login.html";
+
+}
+else {
+
+    try {
+
+        user =
+            JSON.parse(
+                storedUser
+            );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Unable to read logged-in user:",
+            error
+        );
+
+        alert(
+            "Please login again."
+        );
+
+        window.location.href =
+            "../login.html";
+
+    }
+
+}
+
+
+if (
+    !user ||
+    !user.id
+) {
+
+    throw new Error(
+        "Logged-in user information is missing."
+    );
+
+}
+
+
+
+/* =========================================================
+   HTML SAFETY
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+
+/* =========================================================
+   NORMALIZE API RESPONSE
+========================================================= */
+
+function normalizeArray(data) {
+
+    if (Array.isArray(data)) {
+
+        return data;
+
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.content)
+    ) {
+
+        return data.content;
+
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.data)
+    ) {
+
+        return data.data;
+
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.records)
+    ) {
+
+        return data.records;
+
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.consultations)
+    ) {
+
+        return data.consultations;
+
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.prescriptions)
+    ) {
+
+        return data.prescriptions;
+
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.testBookings)
+    ) {
+
+        return data.testBookings;
+
+    }
+
+
+    return [];
+
+}
+
+
+
+/* =========================================================
+   SAFE API JSON
+========================================================= */
+
+async function getJSON(
+    url,
+    fallback = []
+) {
+
+    try {
+
+        const response =
+            await hcAuthenticatedFetch(
+                url
+            );
+
+
+        if (!response.ok) {
+
+            console.warn(
+                "API returned:",
+                response.status,
+                url
+            );
+
+            return fallback;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        return data;
+
+    }
+    catch (error) {
+
+        console.error(
+            "API Error:",
+            url,
+            error
+        );
+
+        return fallback;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   VALUE HELPER
+========================================================= */
+
+function firstValue(
+    object,
+    fields,
+    fallback = "N/A"
+) {
+
+    if (!object) {
+
+        return fallback;
+
+    }
+
+
+    for (
+        const field of fields
+    ) {
+
+        const value =
+            object[field];
+
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ""
+        ) {
+
+            return value;
+
+        }
+
+    }
+
+
+    return fallback;
+
+}
+
+
+
+/* =========================================================
+   LOAD MEDICAL RECORDS
+========================================================= */
+
+async function loadMedicalRecords() {
+
+    const container =
+        document.getElementById(
+            "recordsContainer"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "<p>Loading your complete medical history...</p>";
+
+
+    try {
+
+
+        /* =================================================
+           1. OLD MEDICAL RECORDS
+        ================================================= */
+
+        const recordsResponse =
+            await getJSON(
+                API_URL +
+                "/api/medical-records/user/" +
+                user.id,
+                []
+            );
+
+
+        const records =
+            normalizeArray(
+                recordsResponse
+            );
+
+
+
+        /* =================================================
+           2. CONSULTATIONS
+        ================================================= */
+
+        const consultationsResponse =
+            await getJSON(
+                API_URL +
+                "/api/consultations/user/" +
+                user.id,
+                []
+            );
+
+
+        const consultations =
+            normalizeArray(
+                consultationsResponse
+            );
+
+
+
+        /* =================================================
+           3. PRESCRIPTIONS
+        ================================================= */
+
+        const prescriptionsResponse =
+            await getJSON(
+                API_URL +
+                "/api/prescriptions/user/" +
+                user.id,
+                []
+            );
+
+
+        const prescriptions =
+            normalizeArray(
+                prescriptionsResponse
+            );
+
+
+
+        /* =================================================
+           4. TEST BOOKINGS
+        ================================================= */
+
+        const testBookingsResponse =
+            await getJSON(
+                API_URL +
+                "/api/test-bookings/user/" +
+                user.id,
+                []
+            );
+
+
+        const testBookings =
+            normalizeArray(
+                testBookingsResponse
+            );
+
+
+
+        console.log(
+            "Medical Records:",
+            records
+        );
+
+
+        console.log(
+            "Consultations:",
+            consultations
+        );
+
+
+        console.log(
+            "Prescriptions:",
+            prescriptions
+        );
+
+
+        console.log(
+            "Test Bookings:",
+            testBookings
+        );
+
+
+
+        container.innerHTML = "";
+
+
+
+        /* =================================================
+           COMPLETE MEDICAL HISTORY SUMMARY
+        ================================================= */
+
+        const summary =
+            document.createElement(
+                "div"
+            );
+
+
+        summary.className =
+            "dashboard-card";
+
+
+        summary.innerHTML = `
+
+            <h3>
+                Complete Medical History
+            </h3>
+
+            <p>
+                <strong>
+                    Patient:
+                </strong>
+
+                ${escapeHTML(
+                    firstValue(
+                        user,
+                        [
+                            "fullName",
+                            "name",
+                            "username"
+                        ],
+                        "Patient"
+                    )
+                )}
+
+            </p>
+
+            <p>
+                <strong>
+                    Patient ID:
+                </strong>
+
+                ${escapeHTML(
+                    user.id
+                )}
+
+            </p>
+
+            <p>
+                <strong>
+                    Consultations:
+                </strong>
+
+                ${consultations.length}
+
+            </p>
+
+            <p>
+                <strong>
+                    Prescriptions:
+                </strong>
+
+                ${prescriptions.length}
+
+            </p>
+
+            <p>
+                <strong>
+                    Medical Tests:
+                </strong>
+
+                ${testBookings.length}
+
+            </p>
+
+        `;
+
+
+        container.appendChild(
+            summary
+        );
+
+
+
+        /* =================================================
+           CONSULTATION SECTION
+        ================================================= */
+
+        const consultationSection =
+            document.createElement(
+                "div"
+            );
+
+
+        consultationSection.className =
+            "dashboard-card";
+
+
+        consultationSection.innerHTML = `
+
+            <h3>
+                Consultation Details
+            </h3>
+
+        `;
+
+
+        if (
+            consultations.length === 0
+        ) {
+
+            consultationSection.innerHTML += `
+
+                <p>
+                    No consultation records found.
+                </p>
+
+            `;
+
+        }
+        else {
+
+            for (
+                const consultation
+                of consultations
+            ) {
+
+                consultationSection.innerHTML +=
+                    await buildConsultation(
+                        consultation,
+                        prescriptions
+                    );
+
+            }
+
+        }
+
+
+        container.appendChild(
+            consultationSection
+        );
+
+
+
+        /* =================================================
+           MEDICAL TEST SECTION
+        ================================================= */
+
+        const testSection =
+            document.createElement(
+                "div"
+            );
+
+
+        testSection.className =
+            "dashboard-card";
+
+
+        testSection.innerHTML = `
+
+            <h3>
+                Medical Test Details
+            </h3>
+
+        `;
+
+
+        if (
+            testBookings.length === 0
+        ) {
+
+            testSection.innerHTML += `
+
+                <p>
+                    No medical test records found.
+                </p>
+
+            `;
+
+        }
+        else {
+
+            for (
+                const booking
+                of testBookings
+            ) {
+
+                testSection.innerHTML +=
+                    await buildTestBooking(
+                        booking
+                    );
+
+            }
+
+        }
+
+
+        container.appendChild(
+            testSection
+        );
+
+
+
+        /* =================================================
+           ALL PRESCRIPTIONS SECTION
+        ================================================= */
+
+        const prescriptionSection =
+            document.createElement(
+                "div"
+            );
+
+
+        prescriptionSection.className =
+            "dashboard-card";
+
+
+        prescriptionSection.innerHTML = `
+
+            <h3>
+                Prescribed Medicines & Prescriptions
+            </h3>
+
+        `;
+
+
+        if (
+            prescriptions.length === 0
+        ) {
+
+            prescriptionSection.innerHTML += `
+
+                <p>
+                    No prescriptions have been issued.
+                </p>
+
+            `;
+
+        }
+        else {
+
+            for (
+                const prescription
+                of prescriptions
+            ) {
+
+                prescriptionSection.innerHTML +=
+                    await buildPrescription(
+                        prescription
+                    );
+
+            }
+
+        }
+
+
+        container.appendChild(
+            prescriptionSection
+        );
+
+
+
+        /* =================================================
+           OLD MEDICAL RECORD DATA
+        ================================================= */
+
+        if (
+            records.length > 0
+        ) {
+
+            const oldRecordsSection =
+                document.createElement(
+                    "div"
+                );
+
+
+            oldRecordsSection.className =
+                "dashboard-card";
+
+
+            oldRecordsSection.innerHTML = `
+
+                <h3>
+                    Other Medical Records
+                </h3>
+
+            `;
+
+
+            records.forEach(
+                record => {
+
+                    oldRecordsSection.innerHTML += `
+
+                        <div
+                            style="
+                                margin-top:15px;
+                                padding:15px;
+                                border:1px solid #e5e7eb;
+                                border-radius:10px;
+                            "
+                        >
+
+                            <p>
+                                <strong>
+                                    Record ID:
+                                </strong>
+
+                                ${escapeHTML(
+                                    record.id
+                                )}
+
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Doctor:
+                                </strong>
+
+                                ${escapeHTML(
+                                    firstValue(
+                                        record,
+                                        [
+                                            "doctorName",
+                                            "doctorUsername",
+                                            "doctor"
+                                        ]
+                                    )
+                                )}
+
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Hospital:
+                                </strong>
+
+                                ${escapeHTML(
+                                    firstValue(
+                                        record,
+                                        [
+                                            "hospitalName",
+                                            "hospital"
+                                        ]
+                                    )
+                                )}
+
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Department:
+                                </strong>
+
+                                ${escapeHTML(
+                                    record.department ||
+                                    "N/A"
+                                )}
+
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Diagnosis:
+                                </strong>
+
+                                ${escapeHTML(
+                                    record.diagnosis ||
+                                    "N/A"
+                                )}
+
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Status:
+                                </strong>
+
+                                ${escapeHTML(
+                                    record.status ||
+                                    "N/A"
+                                )}
+
+                            </p>
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+
+            container.appendChild(
+                oldRecordsSection
+            );
+
+        }
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "Medical Records Error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="dashboard-card">
+
+                <h3>
+                    Unable to load medical records
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        error.message
+                    )}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   BUILD CONSULTATION
+========================================================= */
+
+async function buildConsultation(
+    consultation,
+    prescriptions
+) {
+
+
+    const consultationId =
+        firstValue(
+            consultation,
+            [
+                "id",
+                "consultationId"
+            ],
+            "N/A"
+        );
+
+
+    const doctorName =
+        firstValue(
+            consultation,
+            [
+                "doctorUsername",
+                "doctorName",
+                "doctorFullName",
+                "doctor",
+                "doctorId"
+            ]
+        );
+
+
+    const doctorId =
+        firstValue(
+            consultation,
+            [
+                "doctorId",
+                "doctorID"
+            ]
+        );
+
+
+    const specialization =
+        firstValue(
+            consultation,
+            [
+                "specialization",
+                "doctorSpecialization",
+                "doctorSpeciality",
+                "doctorSpecialty"
+            ]
+        );
+
+
+    const reason =
+        firstValue(
+            consultation,
+            [
+                "reason",
+                "consultationReason",
+                "problem",
+                "description"
+            ]
+        );
+
+
+    const status =
+        firstValue(
+            consultation,
+            [
+                "status"
+            ]
+        );
+
+
+    const createdAt =
+        firstValue(
+            consultation,
+            [
+                "createdAt",
+                "createdDate",
+                "requestDate"
+            ]
+        );
+
+
+    const acceptedAt =
+        firstValue(
+            consultation,
+            [
+                "acceptedAt",
+                "confirmedAt"
+            ]
+        );
+
+
+    const completedAt =
+        firstValue(
+            consultation,
+            [
+                "completedAt",
+                "completionDate"
+            ]
+        );
+
+
+    let html = `
+
+        <div
+            style="
+                margin-top:15px;
+                padding:15px;
+                border:1px solid #e5e7eb;
+                border-radius:10px;
+            "
+        >
+
+            <h4>
+                Consultation #${escapeHTML(
+                    consultationId
+                )}
+            </h4>
+
+
+            <p>
+                <strong>
+                    Doctor:
+                </strong>
+
+                ${escapeHTML(
+                    doctorName
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Doctor ID:
+                </strong>
+
+                ${escapeHTML(
+                    doctorId
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Specialization:
+                </strong>
+
+                ${escapeHTML(
+                    specialization
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Reason:
+                </strong>
+
+                ${escapeHTML(
+                    reason
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Status:
+                </strong>
+
+                ${escapeHTML(
+                    status
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Created At:
+                </strong>
+
+                ${escapeHTML(
+                    createdAt
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Accepted At:
+                </strong>
+
+                ${escapeHTML(
+                    acceptedAt
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Completed At:
+                </strong>
+
+                ${escapeHTML(
+                    completedAt
+                )}
+
+            </p>
+
+
+            <h4 style="margin-top:20px;">
+                Consultation Prescriptions
+            </h4>
+
+    `;
+
+
+
+    /* =====================================================
+       FIND PRESCRIPTIONS FOR THIS CONSULTATION
+    ===================================================== */
+
+    const consultationPrescriptions =
+        Array.isArray(
+            prescriptions
+        )
+            ? prescriptions.filter(
+                prescription => {
+
+                    const prescriptionConsultationId =
+                        firstValue(
+                            prescription,
+                            [
+                                "consultationId",
+                                "consultationID",
+                                "consultation_id"
+                            ],
+                            null
+                        );
+
+
+                    return (
+                        prescriptionConsultationId !== null &&
+                        Number(
+                            prescriptionConsultationId
+                        ) ===
+                        Number(
+                            consultationId
+                        )
+                    );
+
+                }
+            )
+            : [];
+
+
+
+    if (
+        consultationPrescriptions.length === 0
+    ) {
+
+        html += `
+
+            <p>
+                No prescription issued for this consultation.
+            </p>
+
+        `;
+
+    }
+    else {
+
+        for (
+            const prescription
+            of consultationPrescriptions
+        ) {
+
+            html +=
+                await buildPrescription(
+                    prescription
+                );
+
+        }
+
+    }
+
+
+
+    html += `
+
+        </div>
+
+    `;
+
+
+    return html;
+
+}
+
+
+
+/* =========================================================
+   BUILD TEST BOOKING
+========================================================= */
+
+async function buildTestBooking(
+    booking
+) {
+
+
+    const medicalTestId =
+        firstValue(
+            booking,
+            [
+                "medicalTestId",
+                "testId",
+                "medicalTestID"
+            ],
+            null
+        );
+
+
+    let testDetails = null;
+
+
+    if (
+        medicalTestId !== null
+    ) {
+
+        testDetails =
+            await getJSON(
+                API_URL +
+                "/api/medical-tests/" +
+                medicalTestId,
+                null
+            );
+
+    }
+
+
+    const testName =
+        firstValue(
+            booking,
+            [
+                "testName",
+                "medicalTestName"
+            ],
+            firstValue(
+                testDetails,
+                [
+                    "testName",
+                    "name"
+                ],
+                "Medical Test"
+            )
+        );
+
+
+    const description =
+        firstValue(
+            booking,
+            [
+                "description",
+                "testDescription"
+            ],
+            firstValue(
+                testDetails,
+                [
+                    "description"
+                ]
+            )
+        );
+
+
+    const sampleType =
+        firstValue(
+            booking,
+            [
+                "sampleType"
+            ],
+            firstValue(
+                testDetails,
+                [
+                    "sampleType"
+                ]
+            )
+        );
+
+
+    const reportTime =
+        firstValue(
+            booking,
+            [
+                "reportTime"
+            ],
+            firstValue(
+                testDetails,
+                [
+                    "reportTime"
+                ]
+            )
+        );
+
+
+    const preparationInstructions =
+        firstValue(
+            booking,
+            [
+                "preparationInstructions",
+                "instructions"
+            ],
+            firstValue(
+                testDetails,
+                [
+                    "preparationInstructions"
+                ]
+            )
+        );
+
+
+    const price =
+        firstValue(
+            booking,
+            [
+                "price",
+                "amount"
+            ],
+            firstValue(
+                testDetails,
+                [
+                    "price"
+                ],
+                "0"
+            )
+        );
+
+
+    const bookingDate =
+        firstValue(
+            booking,
+            [
+                "bookingDate",
+                "date",
+                "testDate"
+            ]
+        );
+
+
+    const bookingTime =
+        firstValue(
+            booking,
+            [
+                "bookingTime",
+                "time",
+                "testTime"
+            ]
+        );
+
+
+    const bookingStatus =
+        firstValue(
+            booking,
+            [
+                "status",
+                "bookingStatus"
+            ]
+        );
+
+
+    const hospitalId =
+        firstValue(
+            booking,
+            [
+                "hospitalId",
+                "hospitalID"
+            ]
+        );
+
+
+    const bookingId =
+        firstValue(
+            booking,
+            [
+                "id",
+                "bookingId"
+            ]
+        );
+
+
+
+    return `
+
+        <div
+            style="
+                margin-top:15px;
+                padding:15px;
+                border:1px solid #e5e7eb;
+                border-radius:10px;
+            "
+        >
+
+            <h4>
+                ${escapeHTML(
+                    testName
+                )}
+            </h4>
+
+
+            <p>
+                <strong>
+                    Test Booking ID:
+                </strong>
+
+                ${escapeHTML(
+                    bookingId
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Test ID:
+                </strong>
+
+                ${escapeHTML(
+                    medicalTestId
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Hospital ID:
+                </strong>
+
+                ${escapeHTML(
+                    hospitalId
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Description:
+                </strong>
+
+                ${escapeHTML(
+                    description
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Sample Type:
+                </strong>
+
+                ${escapeHTML(
+                    sampleType
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Report Time:
+                </strong>
+
+                ${escapeHTML(
+                    reportTime
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Preparation Instructions:
+                </strong>
+
+                ${escapeHTML(
+                    preparationInstructions
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Price:
+                </strong>
+
+                ₹${escapeHTML(
+                    price
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Booking Date:
+                </strong>
+
+                ${escapeHTML(
+                    bookingDate
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Booking Time:
+                </strong>
+
+                ${escapeHTML(
+                    bookingTime
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Booking Status:
+                </strong>
+
+                ${escapeHTML(
+                    bookingStatus
+                )}
+
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   BUILD PRESCRIPTION + MEDICINES
+========================================================= */
+
+async function buildPrescription(
+    prescription
+) {
+
+
+    const prescriptionId =
+        firstValue(
+            prescription,
+            [
+                "id",
+                "prescriptionId"
+            ]
+        );
+
+
+    const consultationId =
+        firstValue(
+            prescription,
+            [
+                "consultationId",
+                "consultationID",
+                "consultation_id"
+            ]
+        );
+
+
+    const diagnosis =
+        firstValue(
+            prescription,
+            [
+                "diagnosis",
+                "diagnose"
+            ]
+        );
+
+
+    const instructions =
+        firstValue(
+            prescription,
+            [
+                "instructions",
+                "instruction"
+            ]
+        );
+
+
+    const prescriptionDate =
+        firstValue(
+            prescription,
+            [
+                "prescriptionDate",
+                "date",
+                "createdAt"
+            ]
+        );
+
+
+    const status =
+        firstValue(
+            prescription,
+            [
+                "status"
+            ]
+        );
+
+
+
+    let html = `
+
+        <div
+            style="
+                margin-top:12px;
+                padding:12px;
+                border:1px solid #dbeafe;
+                border-radius:8px;
+            "
+        >
+
+            <p>
+                <strong>
+                    Prescription ID:
+                </strong>
+
+                ${escapeHTML(
+                    prescriptionId
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Consultation ID:
+                </strong>
+
+                ${escapeHTML(
+                    consultationId
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Diagnosis:
+                </strong>
+
+                ${escapeHTML(
+                    diagnosis
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Instructions:
+                </strong>
+
+                ${escapeHTML(
+                    instructions
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Prescription Date:
+                </strong>
+
+                ${escapeHTML(
+                    prescriptionDate
+                )}
+
+            </p>
+
+
+            <p>
+                <strong>
+                    Status:
+                </strong>
+
+                ${escapeHTML(
+                    status
+                )}
+
+            </p>
+
+
+            <div>
+
+                <strong>
+                    Medicines:
+                </strong>
+
+    `;
+
+
+
+    /* =====================================================
+       LOAD MEDICINES
+    ===================================================== */
+
+    const medicinesResponse =
+        await getJSON(
+            API_URL +
+            "/api/prescription-medicines/prescription/" +
+            prescriptionId,
+            []
+        );
+
+
+    const medicines =
+        normalizeArray(
+            medicinesResponse
+        );
+
+
+
+    if (
+        medicines.length === 0
+    ) {
+
+        html += `
+
+            <p>
+                No medicines were prescribed.
+            </p>
+
+        `;
+
+    }
+    else {
+
+        medicines.forEach(
+            medicine => {
+
+
+                const medicineName =
+                    firstValue(
+                        medicine,
+                        [
+                            "medicineName",
+                            "name",
+                            "medicine"
+                        ]
+                    );
+
+
+                const medicineId =
+                    firstValue(
+                        medicine,
+                        [
+                            "medicineId",
+                            "medicineID"
+                        ]
+                    );
+
+
+                const dosage =
+                    firstValue(
+                        medicine,
+                        [
+                            "dosage",
+                            "dose"
+                        ]
+                    );
+
+
+                const frequency =
+                    firstValue(
+                        medicine,
+                        [
+                            "frequency"
+                        ]
+                    );
+
+
+                const duration =
+                    firstValue(
+                        medicine,
+                        [
+                            "duration"
+                        ]
+                    );
+
+
+                const medicineInstructions =
+                    firstValue(
+                        medicine,
+                        [
+                            "instructions",
+                            "instruction"
+                        ]
+                    );
+
+
+
+                html += `
+
+                    <div
+                        style="
+                            margin-top:8px;
+                            padding:10px;
+                            border:1px solid #e5e7eb;
+                            border-radius:8px;
+                        "
+                    >
+
+                        <p>
+                            <strong>
+                                Medicine:
+                            </strong>
+
+                            ${escapeHTML(
+                                medicineName
+                            )}
+
+                        </p>
+
+
+                        <p>
+                            <strong>
+                                Medicine ID:
+                            </strong>
+
+                            ${escapeHTML(
+                                medicineId
+                            )}
+
+                        </p>
+
+
+                        <p>
+                            <strong>
+                                Dosage:
+                            </strong>
+
+                            ${escapeHTML(
+                                dosage
+                            )}
+
+                        </p>
+
+
+                        <p>
+                            <strong>
+                                Frequency:
+                            </strong>
+
+                            ${escapeHTML(
+                                frequency
+                            )}
+
+                        </p>
+
+
+                        <p>
+                            <strong>
+                                Duration:
+                            </strong>
+
+                            ${escapeHTML(
+                                duration
+                            )}
+
+                        </p>
+
+
+                        <p>
+                            <strong>
+                                Instructions:
+                            </strong>
+
+                            ${escapeHTML(
+                                medicineInstructions
+                            )}
+
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+    }
+
+
+
+    html += `
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    return html;
+
+}
+
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logoutUser() {
+
+    localStorage.removeItem(
+        "loggedInUser"
+    );
+
+
+    localStorage.removeItem(
+        "user"
+    );
+
+
+    window.location.href =
+        "../login.html";
+
+}
+
+
+
+/* =========================================================
+   START
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadMedicalRecords();
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,2062 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Medicine Dispensing - HealthConnect</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css">
+
+    <style>
+
+        .page-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: #1e3a8a;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+        }
+
+        input:disabled {
+            background: #f3f4f6;
+        }
+
+        .btn {
+            padding: 11px 22px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-btn {
+            padding: 11px 22px;
+            background: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .secondary-btn:hover {
+            background: #4b5563;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .hospital-info {
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .hospital-info p {
+            margin: 6px 0;
+        }
+
+        .stock-info {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .record {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: #fafafa;
+        }
+
+        .record p {
+            margin: 6px 0;
+        }
+
+        .success {
+            color: #16a34a;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .loading {
+            color: #2563eb;
+        }
+
+        /* =====================================================
+           MEDICINE SEARCH
+           ===================================================== */
+
+        .medicine-search-wrapper {
+            position: relative;
+        }
+
+        #medicineSearch {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        #medicineSearch:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.10);
+        }
+
+        .medicine-suggestions {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.10);
+            max-height: 240px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .medicine-suggestion {
+            padding: 11px 13px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .medicine-suggestion:last-child {
+            border-bottom: none;
+        }
+
+        .medicine-suggestion:hover {
+            background: #eff6ff;
+        }
+
+        .medicine-suggestion-name {
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+
+        .medicine-suggestion-details {
+            margin-top: 3px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .no-medicine-result {
+            padding: 12px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="page-container">
+
+
+    <a
+        href="dashboard.html"
+        class="back-btn">
+
+        ← Back to Hospital Dashboard
+
+    </a>
+
+
+    <h1>
+        Medicine Dispensing
+    </h1>
+
+
+    <!-- =====================================================
+         HOSPITAL INFORMATION
+         ===================================================== -->
+
+    <div class="hospital-info">
+
+        <p>
+
+            <strong>
+                Hospital:
+            </strong>
+
+            <span id="hospitalName">
+                Loading...
+            </span>
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Hospital ID:
+            </strong>
+
+            <span id="publicHospitalId">
+                Loading...
+            </span>
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Internal Database ID:
+            </strong>
+
+            <span id="databaseHospitalId">
+                Loading...
+            </span>
+
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         DISPENSE MEDICINE
+         ===================================================== -->
+
+    <div class="card">
+
+        <h2>
+            Dispense Medicine
+        </h2>
+
+
+        <form id="dispensingForm">
+
+
+            <div class="form-group">
+
+                <label>
+                    Hospital Database ID
+                </label>
+
+                <input
+                    type="number"
+                    id="hospitalId"
+                    readonly
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Patient ID
+                </label>
+
+                <input
+                    type="number"
+                    id="userId"
+                    min="1"
+                    placeholder="Enter Patient ID"
+                    required>
+
+            </div>
+
+
+            <!-- =================================================
+                 MEDICINE SEARCH
+                 ================================================= -->
+
+            <div class="form-group">
+
+                <label>
+                    Search Medicine
+                </label>
+
+                <div class="medicine-search-wrapper">
+
+                    <input
+                        type="text"
+                        id="medicineSearch"
+                        placeholder="Search by medicine name or medicine ID"
+                        autocomplete="off"
+                        required>
+
+                    <div
+                        id="medicineSuggestions"
+                        class="medicine-suggestions">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="stockInfo"
+                class="stock-info">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Medicine ID
+                </label>
+
+                <input
+                    type="number"
+                    id="medicineId"
+                    readonly
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Medicine Name
+                </label>
+
+                <input
+                    type="text"
+                    id="medicineName"
+                    readonly
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Quantity
+                </label>
+
+                <input
+                    type="number"
+                    id="quantity"
+                    min="1"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Prescription ID
+                </label>
+
+                <input
+                    type="number"
+                    id="prescriptionId"
+                    min="1"
+                    placeholder="Optional">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Dispensing Date
+                </label>
+
+                <input
+                    type="date"
+                    id="dispensingDate"
+                    required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Dispensed By
+                </label>
+
+                <input
+                    type="text"
+                    id="dispensedBy"
+                    placeholder="Hospital staff name"
+                    required>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn">
+
+                Dispense Medicine
+
+            </button>
+
+
+            <button
+                type="button"
+                class="secondary-btn"
+                onclick="loadHospitalStock()">
+
+                Refresh Stock
+
+            </button>
+
+
+            <div
+                id="message"
+                class="message">
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         DISPENSING RECORDS
+         ===================================================== -->
+
+    <div class="card">
+
+        <h2>
+            Dispensing Records
+        </h2>
+
+
+        <button
+            type="button"
+            class="btn"
+            onclick="loadDispensing()">
+
+            Refresh Records
+
+        </button>
+
+
+        <div
+            id="dispensingList"
+            style="margin-top:20px;">
+
+            Loading...
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+    // =====================================================
+    // API
+    // =====================================================
+
+    const API =
+        "http://localhost:8080";
+
+
+    // =====================================================
+    // DOM
+    // =====================================================
+
+    const dispensingForm =
+        document.getElementById(
+            "dispensingForm"
+        );
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    const medicineSearch =
+        document.getElementById(
+            "medicineSearch"
+        );
+
+
+    const medicineSuggestions =
+        document.getElementById(
+            "medicineSuggestions"
+        );
+
+
+    const stockInfo =
+        document.getElementById(
+            "stockInfo"
+        );
+
+
+    const dispensingList =
+        document.getElementById(
+            "dispensingList"
+        );
+
+
+    // =====================================================
+    // STOCK MEMORY
+    // =====================================================
+
+    let hospitalStock = [];
+
+    let currentHospitalId = null;
+
+    let selectedMedicine = null;
+
+
+    // =====================================================
+    // GET STORED HOSPITAL
+    // =====================================================
+
+    function getStoredHospital() {
+
+        const stored =
+            localStorage.getItem(
+                "loggedInHospital"
+            );
+
+
+        if (!stored) {
+
+            return null;
+
+        }
+
+
+        try {
+
+            return JSON.parse(
+                stored
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Hospital storage error:",
+                error
+            );
+
+            return null;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // GET CURRENT HOSPITAL
+    // =====================================================
+
+    async function getCurrentHospital() {
+
+        let hospital =
+            getStoredHospital();
+
+
+        if (!hospital) {
+
+            throw new Error(
+                "Hospital login information not found."
+            );
+
+        }
+
+
+        // -------------------------------------------------
+        // Use internal numeric database ID.
+        // -------------------------------------------------
+
+        if (
+            hospital.id !== null &&
+            hospital.id !== undefined
+        ) {
+
+            return hospital;
+
+        }
+
+
+        // -------------------------------------------------
+        // Recover old localStorage data.
+        // -------------------------------------------------
+
+        if (hospital.hospitalId) {
+
+            const response =
+                await fetch(
+                    API +
+                    "/api/hospitals/hospital-id/" +
+                    encodeURIComponent(
+                        hospital.hospitalId
+                    )
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load hospital information."
+                );
+
+            }
+
+
+            hospital =
+                await response.json();
+
+
+            localStorage.setItem(
+                "loggedInHospital",
+                JSON.stringify(
+                    hospital
+                )
+            );
+
+
+            localStorage.setItem(
+                "hospital",
+                JSON.stringify(
+                    hospital
+                )
+            );
+
+
+            return hospital;
+
+        }
+
+
+        throw new Error(
+            "Hospital database ID is not available."
+        );
+
+    }
+
+
+    // =====================================================
+    // INITIALIZE HOSPITAL
+    // =====================================================
+
+    async function initializeHospital() {
+
+        try {
+
+            const hospital =
+                await getCurrentHospital();
+
+
+            const hospitalDbId =
+                Number(
+                    hospital.id
+                );
+
+
+            if (
+                !Number.isFinite(
+                    hospitalDbId
+                ) ||
+                hospitalDbId <= 0
+            ) {
+
+                throw new Error(
+                    "Hospital database ID is invalid."
+                );
+
+            }
+
+
+            currentHospitalId =
+                hospitalDbId;
+
+
+            document.getElementById(
+                "hospitalId"
+            ).value =
+                hospitalDbId;
+
+
+            document.getElementById(
+                "databaseHospitalId"
+            ).textContent =
+                hospitalDbId;
+
+
+            document.getElementById(
+                "publicHospitalId"
+            ).textContent =
+                hospital.hospitalId ||
+                "N/A";
+
+
+            document.getElementById(
+                "hospitalName"
+            ).textContent =
+                hospital.name ||
+                "Hospital";
+
+
+            setTodayDate();
+
+
+            await loadHospitalStock();
+
+
+            await loadDispensing();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Hospital initialization error:",
+                error
+            );
+
+
+            message.textContent =
+                error.message ||
+                "Unable to load hospital information.";
+
+            message.className =
+                "message error";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // TODAY DATE
+    // =====================================================
+
+    function setTodayDate() {
+
+        const date =
+            new Date();
+
+
+        const year =
+            date.getFullYear();
+
+
+        const month =
+            String(
+                date.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        const day =
+            String(
+                date.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        document.getElementById(
+            "dispensingDate"
+        ).value =
+            year +
+            "-" +
+            month +
+            "-" +
+            day;
+
+    }
+
+
+    // =====================================================
+    // LOAD HOSPITAL MEDICINE STOCK
+    // =====================================================
+
+    async function loadHospitalStock() {
+
+        if (!currentHospitalId) {
+
+            try {
+
+                const hospital =
+                    await getCurrentHospital();
+
+
+                currentHospitalId =
+                    Number(
+                        hospital.id
+                    );
+
+            }
+
+            catch (error) {
+
+                medicineSearch.value =
+                    "";
+
+                medicineSearch.placeholder =
+                    "Hospital information not available.";
+
+                hospitalStock = [];
+
+                return;
+
+            }
+
+        }
+
+
+        medicineSearch.value =
+            "";
+
+        medicineSearch.placeholder =
+            "Loading hospital medicine stock...";
+
+
+        medicineSearch.disabled =
+            true;
+
+
+        medicineSuggestions.style.display =
+            "none";
+
+
+        stockInfo.style.display =
+            "none";
+
+
+        clearMedicineFields();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API +
+                    "/api/hospital-stock/hospital/" +
+                    encodeURIComponent(
+                        currentHospitalId
+                    )
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+
+                throw new Error(
+                    errorText ||
+                    "Unable to load medicine stock."
+                );
+
+            }
+
+
+            const stock =
+                await response.json();
+
+
+            if (
+                !Array.isArray(
+                    stock
+                )
+            ) {
+
+                throw new Error(
+                    "Invalid medicine stock data received."
+                );
+
+            }
+
+
+            hospitalStock =
+                stock;
+
+
+            medicineSearch.disabled =
+                false;
+
+
+            medicineSearch.placeholder =
+                hospitalStock.length > 0
+                    ? "Search by medicine name or medicine ID"
+                    : "No medicine stock available";
+
+
+            if (
+                hospitalStock.length ===
+                0
+            ) {
+
+                medicineSearch.disabled =
+                    true;
+
+                return;
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Hospital stock loading error:",
+                error
+            );
+
+
+            hospitalStock = [];
+
+
+            medicineSearch.disabled =
+                true;
+
+
+            medicineSearch.value =
+                "";
+
+
+            medicineSearch.placeholder =
+                "Unable to load medicine stock";
+
+
+            message.textContent =
+                error.message ||
+                "Unable to load medicine stock.";
+
+            message.className =
+                "message error";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // SEARCH MEDICINE
+    // =====================================================
+
+    medicineSearch.addEventListener(
+        "input",
+        function() {
+
+            const searchText =
+                medicineSearch.value
+                    .trim()
+                    .toLowerCase();
+
+
+            selectedMedicine =
+                null;
+
+
+            clearMedicineFields();
+
+
+            stockInfo.style.display =
+                "none";
+
+
+            if (!searchText) {
+
+                medicineSuggestions.innerHTML =
+                    "";
+
+                medicineSuggestions.style.display =
+                    "none";
+
+                return;
+
+            }
+
+
+            const matches =
+                hospitalStock.filter(
+                    function(item) {
+
+                        const medicineName =
+                            String(
+                                item.medicineName ??
+                                ""
+                            )
+                            .toLowerCase();
+
+
+                        const medicineId =
+                            String(
+                                item.medicineId ??
+                                ""
+                            )
+                            .toLowerCase();
+
+
+                        return (
+                            medicineName.includes(
+                                searchText
+                            ) ||
+                            medicineId.includes(
+                                searchText
+                            )
+                        );
+
+                    }
+                );
+
+
+            medicineSuggestions.innerHTML =
+                "";
+
+
+            if (
+                matches.length ===
+                0
+            ) {
+
+                medicineSuggestions.innerHTML = `
+
+                    <div class="no-medicine-result">
+
+                        No matching medicine found.
+
+                    </div>
+
+                `;
+
+
+                medicineSuggestions.style.display =
+                    "block";
+
+                return;
+
+            }
+
+
+            matches.forEach(
+                function(item) {
+
+                    const suggestion =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    suggestion.className =
+                        "medicine-suggestion";
+
+
+                    suggestion.innerHTML = `
+
+                        <div
+                            class="medicine-suggestion-name">
+
+                            ${escapeHTML(
+                                item.medicineName ||
+                                "Medicine"
+                            )}
+
+                        </div>
+
+
+                        <div
+                            class="medicine-suggestion-details">
+
+                            Medicine ID:
+                            ${escapeHTML(
+                                item.medicineId ??
+                                "-"
+                            )}
+
+                            &nbsp; | &nbsp;
+
+                            Available Stock:
+                            ${escapeHTML(
+                                item.quantity ??
+                                0
+                            )}
+
+                        </div>
+
+                    `;
+
+
+                    suggestion.addEventListener(
+                        "click",
+                        function() {
+
+                            selectMedicine(
+                                item
+                            );
+
+                        }
+                    );
+
+
+                    medicineSuggestions.appendChild(
+                        suggestion
+                    );
+
+                }
+            );
+
+
+            medicineSuggestions.style.display =
+                "block";
+
+        }
+    );
+
+
+    // =====================================================
+    // SELECT MEDICINE
+    // =====================================================
+
+    function selectMedicine(
+        stock
+    ) {
+
+        if (!stock) {
+
+            return;
+
+        }
+
+
+        selectedMedicine =
+            stock;
+
+
+        medicineSearch.value =
+            (
+                stock.medicineName ||
+                "Medicine"
+            ) +
+            " (ID: " +
+            (
+                stock.medicineId ??
+                "-"
+            ) +
+            ")";
+
+
+        document.getElementById(
+            "medicineId"
+        ).value =
+            stock.medicineId ??
+            "";
+
+
+        document.getElementById(
+            "medicineName"
+        ).value =
+            stock.medicineName ??
+            "";
+
+
+        document.getElementById(
+            "quantity"
+        ).value =
+            "";
+
+
+        document.getElementById(
+            "quantity"
+        ).max =
+            Number(
+                stock.quantity ??
+                0
+            );
+
+
+        stockInfo.innerHTML = `
+
+            <strong>
+                Available Stock:
+            </strong>
+
+            ${escapeHTML(
+                stock.quantity ??
+                0
+            )}
+
+            <br>
+
+            <strong>
+                Medicine ID:
+            </strong>
+
+            ${escapeHTML(
+                stock.medicineId ??
+                "-"
+            )}
+
+            <br>
+
+            <strong>
+                Batch:
+            </strong>
+
+            ${escapeHTML(
+                stock.batchNumber ||
+                "-"
+            )}
+
+            <br>
+
+            <strong>
+                Expiry:
+            </strong>
+
+            ${escapeHTML(
+                stock.expiryDate ||
+                "-"
+            )}
+
+        `;
+
+
+        stockInfo.style.display =
+            "block";
+
+
+        medicineSuggestions.style.display =
+            "none";
+
+
+        message.textContent =
+            "";
+
+        message.className =
+            "message";
+
+    }
+
+
+    // =====================================================
+    // CLEAR MEDICINE FIELDS
+    // =====================================================
+
+    function clearMedicineFields() {
+
+        selectedMedicine =
+            null;
+
+
+        document.getElementById(
+            "medicineId"
+        ).value =
+            "";
+
+
+        document.getElementById(
+            "medicineName"
+        ).value =
+            "";
+
+
+        document.getElementById(
+            "quantity"
+        ).value =
+            "";
+
+
+        document.getElementById(
+            "quantity"
+        ).removeAttribute(
+            "max"
+        );
+
+    }
+
+
+    // =====================================================
+    // CLOSE SEARCH SUGGESTIONS
+    // =====================================================
+
+    document.addEventListener(
+        "click",
+        function(event) {
+
+            const wrapper =
+                document.querySelector(
+                    ".medicine-search-wrapper"
+                );
+
+
+            if (
+                wrapper &&
+                !wrapper.contains(
+                    event.target
+                )
+            ) {
+
+                medicineSuggestions.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // DISPENSE MEDICINE
+    // =====================================================
+
+    dispensingForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            try {
+
+                if (!currentHospitalId) {
+
+                    throw new Error(
+                        "Hospital database ID is not available."
+                    );
+
+                }
+
+
+                const userId =
+                    Number(
+                        document.getElementById(
+                            "userId"
+                        ).value
+                    );
+
+
+                const medicineId =
+                    Number(
+                        document.getElementById(
+                            "medicineId"
+                        ).value
+                    );
+
+
+                const medicineName =
+                    document.getElementById(
+                        "medicineName"
+                    ).value.trim();
+
+
+                const quantity =
+                    Number(
+                        document.getElementById(
+                            "quantity"
+                        ).value
+                    );
+
+
+                const prescriptionIdValue =
+                    document.getElementById(
+                        "prescriptionId"
+                    ).value.trim();
+
+
+                const dispensingDate =
+                    document.getElementById(
+                        "dispensingDate"
+                    ).value;
+
+
+                const dispensedBy =
+                    document.getElementById(
+                        "dispensedBy"
+                    ).value.trim();
+
+
+                if (
+                    !Number.isFinite(
+                        userId
+                    ) ||
+                    userId <= 0
+                ) {
+
+                    throw new Error(
+                        "Patient ID must be greater than 0."
+                    );
+
+                }
+
+
+                if (
+                    !Number.isFinite(
+                        medicineId
+                    ) ||
+                    medicineId <= 0
+                ) {
+
+                    throw new Error(
+                        "Please select a medicine from hospital stock."
+                    );
+
+                }
+
+
+                if (!medicineName) {
+
+                    throw new Error(
+                        "Medicine name is required."
+                    );
+
+                }
+
+
+                if (
+                    !Number.isFinite(
+                        quantity
+                    ) ||
+                    quantity <= 0
+                ) {
+
+                    throw new Error(
+                        "Quantity must be greater than 0."
+                    );
+
+                }
+
+
+                // -------------------------------------------------
+                // Verify selected medicine is actually in stock.
+                // -------------------------------------------------
+
+                const stock =
+                    hospitalStock.find(
+                        function(item) {
+
+                            return Number(
+                                item.medicineId
+                            ) ===
+                            medicineId;
+
+                        }
+                    );
+
+
+                if (!stock) {
+
+                    throw new Error(
+                        "Medicine stock not found for this hospital."
+                    );
+
+                }
+
+
+                const availableQuantity =
+                    Number(
+                        stock.quantity ??
+                        0
+                    );
+
+
+                if (
+                    quantity >
+                    availableQuantity
+                ) {
+
+                    throw new Error(
+                        "Insufficient medicine stock. Available quantity: " +
+                        availableQuantity
+                    );
+
+                }
+
+
+                if (!dispensingDate) {
+
+                    throw new Error(
+                        "Dispensing date is required."
+                    );
+
+                }
+
+
+                if (!dispensedBy) {
+
+                    throw new Error(
+                        "Dispensed By is required."
+                    );
+
+                }
+
+
+                const dispensingData = {
+
+                    hospitalId:
+                        currentHospitalId,
+
+                    userId:
+                        userId,
+
+                    medicineId:
+                        medicineId,
+
+                    prescriptionId:
+                        prescriptionIdValue
+                            ? Number(
+                                prescriptionIdValue
+                              )
+                            : null,
+
+                    medicineName:
+                        medicineName,
+
+                    quantity:
+                        quantity,
+
+                    dispensingDate:
+                        dispensingDate,
+
+                    dispensedBy:
+                        dispensedBy
+
+                };
+
+
+                message.textContent =
+                    "Processing...";
+
+                message.className =
+                    "message loading";
+
+
+                // -------------------------------------------------
+                // Actual backend endpoint:
+                // POST /api/dispensing
+                // -------------------------------------------------
+
+                const response =
+                    await fetch(
+                        API +
+                        "/api/dispensing",
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    dispensingData
+                                )
+
+                        }
+                    );
+
+
+                const contentType =
+                    response.headers.get(
+                        "content-type"
+                    );
+
+
+                let data;
+
+
+                if (
+                    contentType &&
+                    contentType.includes(
+                        "application/json"
+                    )
+                ) {
+
+                    data =
+                        await response.json();
+
+                }
+
+                else {
+
+                    data =
+                        await response.text();
+
+                }
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+
+                        typeof data === "string"
+                            ? data
+                            : "Medicine dispensing failed."
+
+                    );
+
+                }
+
+
+                message.textContent =
+                    "Medicine dispensed successfully.";
+
+                message.className =
+                    "message success";
+
+
+                dispensingForm.reset();
+
+
+                document.getElementById(
+                    "hospitalId"
+                ).value =
+                    currentHospitalId;
+
+
+                clearMedicineFields();
+
+
+                medicineSearch.value =
+                    "";
+
+
+                stockInfo.style.display =
+                    "none";
+
+
+                medicineSuggestions.style.display =
+                    "none";
+
+
+                setTodayDate();
+
+
+                await loadHospitalStock();
+
+
+                await loadDispensing();
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Dispensing error:",
+                    error
+                );
+
+
+                message.textContent =
+                    error.message ||
+                    "Unable to dispense medicine.";
+
+                message.className =
+                    "message error";
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // LOAD DISPENSING RECORDS
+    // =====================================================
+
+    async function loadDispensing() {
+
+        if (!currentHospitalId) {
+
+            dispensingList.innerHTML =
+                "<p>Hospital information not available.</p>";
+
+            return;
+
+        }
+
+
+        dispensingList.innerHTML =
+            "<p>Loading dispensing records...</p>";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    API +
+                    "/api/dispensing/hospital/" +
+                    encodeURIComponent(
+                        currentHospitalId
+                    )
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+
+                throw new Error(
+                    errorText ||
+                    "Unable to load dispensing records."
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            dispensingList.innerHTML =
+                "";
+
+
+            if (
+                !Array.isArray(
+                    data
+                ) ||
+                data.length === 0
+            ) {
+
+                dispensingList.innerHTML = `
+
+                    <p style="color:#6b7280;">
+
+                        No dispensing records found.
+
+                    </p>
+
+                `;
+
+                return;
+
+            }
+
+
+            data.forEach(
+                function(item) {
+
+                    const record =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    record.className =
+                        "record";
+
+
+                    record.innerHTML = `
+
+                        <p>
+
+                            <strong>
+                                Dispensing ID:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.id
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Hospital ID:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.hospitalId
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Patient ID:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.userId
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Medicine ID:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.medicineId
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Medicine:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.medicineName
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Quantity:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.quantity
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Prescription ID:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.prescriptionId ||
+                                "-"
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Date:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.dispensingDate
+                            )}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Dispensed By:
+                            </strong>
+
+                            ${escapeHTML(
+                                item.dispensedBy
+                            )}
+
+                        </p>
+
+                    `;
+
+
+                    dispensingList.appendChild(
+                        record
+                    );
+
+                }
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Dispensing records error:",
+                error
+            );
+
+
+            dispensingList.innerHTML = `
+
+                <p class="error">
+
+                    Unable to load dispensing records.
+
+                    <br>
+
+                    <small>
+
+                        ${escapeHTML(
+                            error.message ||
+                            "Unknown error."
+                        )}
+
+                    </small>
+
+                </p>
+
+            `;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // ESCAPE HTML
+    // =====================================================
+
+    function escapeHTML(value) {
+
+        return String(
+            value ?? ""
+        )
+
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
+
+    }
+
+
+    // =====================================================
+    // PAGE LOAD
+    // =====================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            initializeHospital();
+
+        }
+    );
+
+
+    // =====================================================
+    // GLOBAL EXPORT
+    // =====================================================
+
+    window.loadHospitalStock =
+        loadHospitalStock;
+
+
+    window.loadDispensing =
+        loadDispensing;
+
+</script>
+
+
+</body>
+
+</html>

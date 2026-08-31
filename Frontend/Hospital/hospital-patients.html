@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Patients - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/dashboard.css">
+
+    <style>
+
+        .page-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.08);
+            margin-bottom: 25px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .patient-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .patient-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            background: #f9fafb;
+        }
+
+        .patient-card h3 {
+            margin-top: 0;
+        }
+
+        .patient-row {
+            margin: 8px 0;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="page-container">
+
+    <a href="dashboard.html"
+       class="back-btn">
+
+        ← Back to Hospital Dashboard
+
+    </a>
+
+
+    <div class="card">
+
+        <h2>🧑‍⚕️ Hospital Patients</h2>
+
+        <p id="hospitalName">
+            Loading hospital...
+        </p>
+
+        <div id="message"></div>
+
+        <div
+            id="patientList"
+            class="patient-grid">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const USER_API =
+    "http://localhost:8080/api/users";
+
+
+let hospital = null;
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadHospitalPatients
+);
+
+
+async function loadHospitalPatients() {
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    const list =
+        document.getElementById(
+            "patientList"
+        );
+
+
+    try {
+
+        const stored =
+            localStorage.getItem(
+                "loggedInHospital"
+            );
+
+
+        if (!stored) {
+
+            window.location.href =
+                "../login.html";
+
+            return;
+        }
+
+
+        try {
+
+            hospital =
+                JSON.parse(stored);
+
+        }
+        catch(error) {
+
+            localStorage.removeItem(
+                "loggedInHospital"
+            );
+
+            window.location.href =
+                "../login.html";
+
+            return;
+        }
+
+
+        if (!hospital.name) {
+
+            throw new Error(
+                "Hospital name not available."
+            );
+
+        }
+
+
+        document.getElementById(
+            "hospitalName"
+        ).textContent =
+            "Hospital: " +
+            hospital.name;
+
+
+        message.textContent =
+            "Loading patients...";
+
+        message.style.color =
+            "#2563eb";
+
+
+        list.innerHTML =
+            "";
+
+
+        const response =
+            await fetch(
+                `${USER_API}/hospital/${encodeURIComponent(hospital.name)}`
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        let data;
+
+
+        try {
+
+            data =
+                responseText
+                    ? JSON.parse(responseText)
+                    : [];
+
+        }
+        catch(error) {
+
+            data =
+                responseText;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                typeof data === "string"
+                    ? data
+                    : "Unable to load patients."
+            );
+
+        }
+
+
+        displayPatients(
+            Array.isArray(data)
+                ? data
+                : []
+        );
+
+
+    }
+    catch(error) {
+
+        console.error(
+            "Hospital Patients Error:",
+            error
+        );
+
+
+        message.textContent =
+            error.message ||
+            "Unable to load patients.";
+
+        message.style.color =
+            "#dc2626";
+
+
+        list.innerHTML =
+            "";
+
+    }
+
+}
+
+
+function displayPatients(patients) {
+
+    const list =
+        document.getElementById(
+            "patientList"
+        );
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    list.innerHTML =
+        "";
+
+
+    if (!Array.isArray(patients) ||
+        patients.length === 0) {
+
+        message.textContent =
+            "No patients are currently associated with this hospital.";
+
+        message.style.color =
+            "#6b7280";
+
+        return;
+    }
+
+
+    message.textContent =
+        patients.length +
+        " patient(s) found.";
+
+
+    message.style.color =
+        "#166534";
+
+
+    patients.forEach(
+        function(patient) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "patient-card";
+
+
+            card.innerHTML = `
+
+                <h3>
+
+                    🧑 ${escapeHtml(
+                        patient.fullName ||
+                        "Unknown Patient"
+                    )}
+
+                </h3>
+
+
+                <div class="patient-row">
+
+                    <strong>
+                        Patient Username:
+                    </strong>
+
+                    ${escapeHtml(
+                        patient.username ||
+                        "N/A"
+                    )}
+
+                </div>
+
+
+                <div class="patient-row">
+
+                    <strong>
+                        Email:
+                    </strong>
+
+                    ${escapeHtml(
+                        patient.email ||
+                        "N/A"
+                    )}
+
+                </div>
+
+
+                <div class="patient-row">
+
+                    <strong>
+                        Mobile:
+                    </strong>
+
+                    ${escapeHtml(
+                        patient.mobile ||
+                        "N/A"
+                    )}
+
+                </div>
+
+
+                <div class="patient-row">
+
+                    <strong>
+                        Hospital:
+                    </strong>
+
+                    ${escapeHtml(
+                        patient.hospitalName ||
+                        hospital.name ||
+                        "N/A"
+                    )}
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        String(value);
+
+
+    return div.innerHTML;
+
+}
+
+</script>
+
+</body>
+
+</html>

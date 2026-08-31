@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Finder - HealthConnect</title>
+
+    <link rel="stylesheet"
+          href="../Css/main.css">
+
+    <link rel="stylesheet"
+          href="../Css/dashboard.css">
+
+    <link rel="stylesheet"
+          href="../Css/response.css">
+
+
+    <style>
+
+        .search-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(220px, 1fr)
+                );
+
+            gap: 15px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .hospital-card {
+
+            transition: 0.25s;
+        }
+
+
+        .hospital-card:hover {
+
+            transform: translateY(-3px);
+        }
+
+
+        .hospital-actions {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+            margin-top: 20px;
+        }
+
+
+        .secondary-btn {
+
+            background: #64748b;
+        }
+
+
+        .secondary-btn:hover {
+
+            background: #475569;
+        }
+
+
+        .details-section {
+
+            display: none;
+
+            margin-top: 30px;
+        }
+
+
+        .details-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(280px, 1fr)
+                );
+
+            gap: 20px;
+        }
+
+
+        .test-card,
+        .doctor-card {
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            background: white;
+        }
+
+
+        .back-hospital-btn {
+
+            margin-bottom: 20px;
+        }
+
+
+        .booking-form {
+
+            margin-top: 15px;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background: #f8fafc;
+        }
+
+
+        .booking-form input {
+
+            width: 100%;
+
+            padding: 10px;
+
+            margin-bottom: 10px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 6px;
+        }
+
+
+        .status-message {
+
+            margin-top: 20px;
+
+            font-weight: 600;
+        }
+
+
+        @media (max-width: 600px) {
+
+            .hospital-actions {
+
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard-container">
+
+
+    <!-- HEADER -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                Hospital Finder
+            </p>
+
+        </div>
+
+
+        <button
+            class="logout-btn"
+            type="button"
+            onclick="logoutUser()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <!-- MAIN -->
+
+    <main class="dashboard-content">
+
+
+        <div class="dashboard-title">
+
+            <h2>
+                Find Healthcare Facilities
+            </h2>
+
+            <p>
+                Find government and private hospitals,
+                doctors and medical tests at your selected
+                location.
+            </p>
+
+        </div>
+
+
+
+        <!-- SEARCH -->
+
+        <div class="dashboard-card">
+
+            <h3>
+                Search Hospitals
+            </h3>
+
+            <br>
+
+
+            <div class="search-grid">
+
+                <input
+                    type="text"
+                    id="locationSearch"
+                    placeholder="Enter city or location">
+
+
+                <select id="typeSearch">
+
+                    <option value="">
+                        All Hospital Types
+                    </option>
+
+                    <option value="Government">
+                        Government
+                    </option>
+
+                    <option value="Private">
+                        Private
+                    </option>
+
+                    <option value="Clinic">
+                        Clinic
+                    </option>
+
+                    <option value="Primary Health Centre">
+                        Primary Health Centre
+                    </option>
+
+                    <option value="Community Health Centre">
+                        Community Health Centre
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="dashboard-btn"
+                onclick="filterHospitals()">
+
+                Search Hospitals
+
+            </button>
+
+
+            <button
+                type="button"
+                class="dashboard-btn secondary-btn"
+                onclick="loadHospitals()"
+                style="margin-left:10px;">
+
+                Show All
+
+            </button>
+
+        </div>
+
+
+
+        <!-- HOSPITAL LIST -->
+
+        <section id="hospitalListSection">
+
+            <h2 style="margin-top:30px;">
+
+                Available Healthcare Facilities
+
+            </h2>
+
+
+            <div
+                id="hospitalContainer"
+                class="dashboard-cards"
+                style="margin-top:20px;">
+
+                <p>
+                    Loading hospitals...
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- HOSPITAL DETAILS -->
+
+        <section
+            id="hospitalDetailsSection"
+            class="details-section">
+
+
+            <button
+                type="button"
+                class="dashboard-btn secondary-btn back-hospital-btn"
+                onclick="backToHospitals()">
+
+                ← Back to Hospitals
+
+            </button>
+
+
+            <!-- HOSPITAL INFO -->
+
+            <div
+                id="hospitalDetails"
+                class="dashboard-card">
+
+            </div>
+
+
+
+            <!-- DOCTORS -->
+
+            <h2 style="margin-top:30px;">
+
+                👨‍⚕️ Doctors at this Hospital
+
+            </h2>
+
+
+            <div
+                id="hospitalDoctors"
+                class="details-grid"
+                style="margin-top:20px;">
+
+                <p>
+                    Loading doctors...
+                </p>
+
+            </div>
+
+
+
+            <!-- TESTS -->
+
+            <h2 style="margin-top:35px;">
+
+                🧪 Medical Tests
+
+            </h2>
+
+
+            <div
+                id="hospitalTests"
+                class="details-grid"
+                style="margin-top:20px;">
+
+                <p>
+                    Loading medical tests...
+                </p>
+
+            </div>
+
+
+
+            <div
+                id="hospitalMessage"
+                class="status-message">
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- USER TEST BOOKINGS -->
+
+        <section style="margin-top:45px;">
+
+            <h2>
+                My Medical Test Bookings
+            </h2>
+
+
+            <div
+                id="myTestBookings"
+                class="dashboard-cards"
+                style="margin-top:20px;">
+
+                <p>
+                    Loading bookings...
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+
+<script src="../Js/user.js"></script>
+
+<script src="../Js/hospital-finder.js"></script>
+
+
+</body>
+
+</html>

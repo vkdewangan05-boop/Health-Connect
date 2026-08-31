@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Doctor Consultation - HealthConnect</title>
+
+    <link rel="stylesheet"
+          href="../Css/main.css">
+
+    <link rel="stylesheet"
+          href="../Css/dashboard.css">
+
+    <link rel="stylesheet"
+          href="../Css/response.css">
+
+    <style>
+        /* Chat Modal Styling */
+        .chat-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-modal-box {
+            background: #ffffff;
+            width: 90%;
+            max-width: 550px;
+            height: 520px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #0f766e;
+            color: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .chat-close-btn {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f9fafb;
+        }
+
+        .chat-bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .chat-bubble.me {
+            align-self: flex-end;
+            background: #0f766e;
+            color: #ffffff;
+            border-bottom-right-radius: 2px;
+        }
+
+        .chat-bubble.other {
+            align-self: flex-start;
+            background: #e5e7eb;
+            color: #1f2937;
+            border-bottom-left-radius: 2px;
+        }
+
+        .chat-footer {
+            padding: 12px;
+            background: #ffffff;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .chat-footer button {
+            background: #0f766e;
+            color: #ffffff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .chat-footer button:hover {
+            opacity: 0.9;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                Doctor Consultation
+            </p>
+
+        </div>
+
+
+        <button
+            class="logout-btn"
+            type="button"
+            onclick="logoutUser()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="dashboard-content">
+
+
+        <!-- =================================================
+             TITLE
+             ================================================= -->
+
+        <div class="dashboard-title">
+
+            2>
+                Doctor Consultation
+            </h2>
+
+            <p>
+                Find doctors based on healthcare type
+                and preferred location.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PATIENT INFORMATION
+             ================================================= -->
+
+        <div class="dashboard-card">
+
+            <h3>
+                Patient Information
+            </h3>
+
+            <p id="patientInfo">
+                Loading...
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             HEALTHCARE TYPE CHOICE
+             ================================================= -->
+
+        <section id="healthcareChoiceSection">
+
+            <h2 style="margin-top:30px;">
+
+                Choose Healthcare Type
+
+            </h2>
+
+
+            <div class="dashboard-cards">
+
+
+                <!-- GOVERNMENT -->
+
+                <div class="dashboard-card">
+
+                    <h3>
+                        🏛️ Government Healthcare
+                    </h3>
+
+                    <p>
+                        Find doctors available through
+                        government healthcare services.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="dashboard-btn"
+                        onclick="selectHealthcareType('GOVERNMENT')">
+
+                        Choose Government Healthcare
+
+                    </button>
+
+                </div>
+
+
+
+                <!-- PRIVATE -->
+
+                <div class="dashboard-card">
+
+                    <h3>
+                        🏥 Private Healthcare
+                    </h3>
+
+                    <p>
+                        Find doctors available through
+                        private healthcare services.
+                    </p>
+
+                    <button
+                        type="button"
+                        class="dashboard-btn"
+                        onclick="selectHealthcareType('PRIVATE')">
+
+                        Choose Private Healthcare
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LOCATION + DOCTORS
+             ================================================= -->
+
+        <section
+            id="doctorSection"
+            style="display:none;">
+
+
+            <!-- HEADER -->
+
+            <div
+                style="
+                    margin-top:30px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:space-between;
+                    gap:15px;
+                    flex-wrap:wrap;
+                ">
+
+                <div>
+
+                    <h2 id="doctorSectionTitle">
+                        Available Doctors
+                    </h2>
+
+                    <p id="selectedHealthcareText">
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="dashboard-btn"
+                    onclick="changeHealthcareType()">
+
+                    Change Healthcare Type
+
+                </button>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 LOCATION SEARCH
+                 ================================================= -->
+
+            <div
+                class="dashboard-card"
+                style="margin-top:25px;">
+
+                <h3>
+                    📍 Choose Your Location
+                </h3>
+
+                <p>
+                    Find doctors near your preferred
+                    location. You can also search another
+                    city or choose all locations.
+                </p>
+
+
+                <input
+                    type="text"
+                    id="locationSearch"
+                    placeholder="Enter city or location e.g. Raipur, Delhi..."
+                    style="
+                        width:100%;
+                        padding:12px;
+                        margin-top:15px;
+                        margin-bottom:12px;
+                        border:1px solid #d1d5db;
+                        border-radius:8px;
+                    ">
+
+
+                <div
+                    style="
+                        display:flex;
+                        gap:10px;
+                        flex-wrap:wrap;
+                    ">
+
+                    <button
+                        type="button"
+                        class="dashboard-btn"
+                        onclick="searchDoctorsByLocation()">
+
+                        🔍 Find Doctors
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="dashboard-btn"
+                        onclick="loadAllDoctorsForType()">
+
+                        🌎 All Locations
+
+                    </button>
+
+                </div>
+
+
+                <p
+                    id="locationMessage"
+                    style="
+                        margin-top:15px;
+                        font-weight:600;
+                    ">
+
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DOCTOR LIST
+                 ================================================= -->
+
+            <div
+                class="dashboard-cards"
+                id="doctorContainer"
+                style="margin-top:25px;">
+
+                <p>
+                    Enter a location to find doctors.
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             MESSAGE
+             ================================================= -->
+
+        <div
+            id="message"
+            style="
+                margin-top:25px;
+                font-weight:600;
+            ">
+
+        </div>
+
+
+
+        <!-- =================================================
+             MY APPOINTMENTS & CONSULTATIONS
+             ================================================= -->
+
+        <h2 style="margin-top:40px;">
+
+            My Appointments
+
+        </h2>
+
+
+        <div
+            id="appointmentContainer"
+            style="margin-top:20px;">
+
+            <p>
+                Loading appointments...
+            </p>
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     MEDICAL RECORD ACCESS
+     ===================================================== -->
+
+<div
+    class="dashboard-card"
+    style="margin-top:25px;">
+
+    <h2>
+        Medical Record Access Requests
+    </h2>
+
+    <p>
+        Doctors can request permission to view your
+        previous medical records.
+    </p>
+
+    <div
+        id="medicalRecordAccessRequests"
+        style="margin-top:20px;">
+
+        Loading requests...
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CONSULTATION CHAT MODAL
+     ===================================================== -->
+
+<div id="chatModal" class="chat-modal-overlay">
+    <div class="chat-modal-box">
+        <div class="chat-header">
+            <h3 id="chatDoctorName">💬 Consultation Chat</h3>
+            <button type="button" class="chat-close-btn" onclick="closeChatModal()">✕</button>
+        </div>
+
+        <div id="chatMessagesBox" class="chat-messages">
+            <p style="text-align:center; color:#9ca3af;">Loading messages...</p>
+        </div>
+
+        <div class="chat-footer">
+            <input type="text" id="chatInputMessage" placeholder="Type your message here..." onkeypress="handleChatKeyPress(event)">
+            <button type="button" onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script src="../Js/user.js"></script>
+
+<script src="../Js/consultation.js"></script>
+
+<script>
+    // =====================================================
+    // REAL-TIME CONSULTATION CHAT LOGIC (PATIENT SIDE)
+    // =====================================================
+
+    const CHAT_API_BASE = "http://localhost:8080/api/chat";
+    let activeChatConsultationId = null;
+    let activePatientId = null;
+    let chatIntervalTimer = null;
+
+    function openChatModal(consultationId, doctorName) {
+        activeChatConsultationId = consultationId;
+
+        // Get patient user ID from existing storage
+        const userStr = localStorage.getItem("loggedInUser") || localStorage.getItem("user");
+        if (userStr) {
+            try {
+                const userObj = JSON.parse(userStr);
+                activePatientId = userObj.id || userObj.userId;
+            } catch(e) {}
+        }
+
+        document.getElementById("chatDoctorName").innerText = "💬 Chat with " + (doctorName || "Doctor");
+        document.getElementById("chatModal").style.display = "flex";
+
+        loadChatMessages();
+        
+        // Auto refresh every 3 seconds
+        if (chatIntervalTimer) clearInterval(chatIntervalTimer);
+        chatIntervalTimer = setInterval(loadChatMessages, 3000);
+    }
+
+    function closeChatModal() {
+        document.getElementById("chatModal").style.display = "none";
+        activeChatConsultationId = null;
+        if (chatIntervalTimer) {
+            clearInterval(chatIntervalTimer);
+            chatIntervalTimer = null;
+        }
+    }
+
+    async function loadChatMessages() {
+        if (!activeChatConsultationId) return;
+
+        try {
+            const res = await fetch(`${CHAT_API_BASE}/history/${activeChatConsultationId}`);
+            if (!res.ok) return;
+
+            const messages = await res.json();
+            const box = document.getElementById("chatMessagesBox");
+            box.innerHTML = "";
+
+            if (!messages || messages.length === 0) {
+                box.innerHTML = '<p style="text-align:center; color:#9ca3af; margin-top:20px;">No messages yet. Start the conversation!</p>';
+                return;
+            }
+
+            messages.forEach(msg => {
+                const isMe = msg.senderType === "PATIENT";
+                const div = document.createElement("div");
+                div.className = `chat-bubble ${isMe ? "me" : "other"}`;
+                div.innerText = msg.message;
+                box.appendChild(div);
+            });
+
+            box.scrollTop = box.scrollHeight;
+        } catch (err) {
+            console.error("Chat load error:", err);
+        }
+    }
+
+    async function sendChatMessage() {
+        const input = document.getElementById("chatInputMessage");
+        const msgText = input.value.trim();
+
+        if (!msgText || !activeChatConsultationId) return;
+
+        const payload = {
+            consultationId: activeChatConsultationId,
+            senderId: activePatientId || 1,
+            senderType: "PATIENT",
+            message: msgText
+        };
+
+        try {
+            const res = await fetch(`${CHAT_API_BASE}/send`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                input.value = "";
+                loadChatMessages();
+            } else {
+                const errText = await res.text();
+                alert("Could not send message: " + errText);
+            }
+        } catch (err) {
+            alert("Error sending message: " + err.message);
+        }
+    }
+
+    function handleChatKeyPress(event) {
+        if (event.key === "Enter") {
+            sendChatMessage();
+        }
+    }
+
+    // Make global for external JS files
+    window.openChatModal = openChatModal;
+    window.closeChatModal = closeChatModal;
+</script>
+
+</body>
+
+</html>

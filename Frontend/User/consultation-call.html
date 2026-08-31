@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Call - Patient</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #f4f7fb; color: #1f2937; }
+        .header { background: #0f766e; color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .container { width: 92%; max-width: 1100px; margin: 25px auto; }
+        .card { background: white; padding: 22px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; margin-bottom: 12px; }
+        button { padding: 10px 16px; border: none; border-radius: 6px; background: #0f766e; color: white; cursor: pointer; font-weight: bold; }
+        button:hover { opacity: 0.9; }
+        .btn-cancel { background: #dc2626; }
+        .btn-audio { background: #2563eb; }
+        .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #111827; padding: 15px; border-radius: 10px; margin-top: 15px; }
+        video { width: 100%; height: 280px; background: #000; border-radius: 8px; object-fit: cover; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-accepted { background: #dcfce7; color: #16a34a; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
+        .status-ended { background: #e5e7eb; color: #4b5563; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h2>HealthConnect - Patient Portal</h2>
+    <a href="dashboard.html" style="color:white; text-decoration:none;">Back to Dashboard</a>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h3>📞 Initiate Consultation Call</h3>
+        <form id="callForm">
+            <label>Consultation ID</label>
+            <input type="number" id="consultationId" required placeholder="Enter Consultation ID">
+            <label>Patient ID</label>
+            <input type="number" id="patientId" required placeholder="Enter your Patient ID">
+            <label>Doctor ID</label>
+            <input type="number" id="doctorId" required placeholder="Enter Doctor ID">
+            <label>Call Type</label>
+            <select id="callType">
+                <option value="AUDIO">Audio Call</option>
+                <option value="VIDEO">Video Call</option>
+            </select>
+            <button type="submit" class="btn-audio">Submit Call Request</button>
+        </form>
+        <p id="alertMsg" style="margin-top:10px; font-weight:bold;"></p>
+    </div>
+
+    <!-- WebRTC Live Stream Box -->
+    <div class="card" id="mediaBox" style="display:none;">
+        <h3>🎥 Active Call Interface</h3>
+        <div class="video-grid">
+            <div>
+                <p style="color:white; margin-bottom:5px;">Local Stream (You)</p>
+                <video id="localVideo" autoplay playsinline muted></video>
+            </div>
+            <div>
+                <p style="color:white; margin-bottom:5px;">Remote Stream (Doctor)</p>
+                <video id="remoteVideo" autoplay playsinline></video>
+            </div>
+        </div>
+        <button id="endCallBtn" class="btn-cancel" style="margin-top:15px;">Disconnect Call</button>
+    </div>
+
+    <div class="card">
+        <h3>📋 My Call Requests</h3>
+        <div id="requestList" style="margin-top:15px;">Loading...</div>
+    </div>
+</div>
+
+<script>
+const API_BASE = "http://localhost:8080/api";
+let localStream = null;
+let peerConnection = null;
+let currentSessionId = null;
+
+// Submit Request
+document.getElementById("callForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const payload = {
+        consultationId: Number(document.getElementById("consultationId").value),
+        patientId: Number(document.getElementById("patientId").value),
+        doctorId: Number(document.getElementById("doctorId").value),
+        callerId: Number(document.getElementById("patientId").value),
+        receiverId: Number(document.getElementById("doctorId").value),
+        callType: document.getElementById("callType").value,
+        status: "PENDING"
+    };
+
+    try {
+        const res = await fetch(`${API_BASE}/call-requests`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(await res.text());
+        document.getElementById("alertMsg").innerText = "Request sent successfully!";
+        document.getElementById("alertMsg").style.color = "green";
+        fetchRequests();
+    } catch (err) {
+        document.getElementById("alertMsg").innerText = "Error: " + err.message;
+        document.getElementById("alertMsg").style.color = "red";
+    }
+});
+
+// Fetch Requests with Polling (Auto Refresh Status)
+async function fetchRequests() {
+    const pId = document.getElementById("patientId").value;
+    if (!pId) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/call-requests/patient/${pId}`);
+        const requests = await res.json();
+        const container = document.getElementById("requestList");
+        container.innerHTML = "";
+
+        requests.forEach(req => {
+            const div = document.createElement("div");
+            div.style.borderBottom = "1px solid #eee";
+            div.style.padding = "10px 0";
+            div.innerHTML = `
+                <p><strong>Req ID:</strong> #${req.id} | <strong>Type:</strong> ${req.callType} 
+                | <span class="status-badge status-${req.status.toLowerCase()}">${req.status}</span></p>
+                ${req.status === 'ACCEPTED' ? `<button onclick="startSession(${req.id}, '${req.callType}')" style="margin-top:5px; background:#16a34a;">Start Live Call</button>` : ''}
+            `;
+            container.appendChild(div);
+        });
+    } catch (err) {}
+}
+
+// Start Call Session & WebRTC Stream
+async function startSession(requestId, type) {
+    try {
+        const res = await fetch(`${API_BASE}/call-sessions/start/${requestId}`, { method: "POST" });
+        if(!res.ok) throw new Error(await res.text());
+        const session = await res.json();
+        currentSessionId = session.id;
+
+        // Init Media Tracks
+        document.getElementById("mediaBox").style.display = "block";
+        localStream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: type === "VIDEO"
+        });
+        document.getElementById("localVideo").srcObject = localStream;
+
+        peerConnection = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+        peerConnection.ontrack = (event) => {
+            document.getElementById("remoteVideo").srcObject = event.streams[0];
+        };
+
+        document.getElementById("endCallBtn").onclick = () => stopSession(currentSessionId);
+    } catch(err) {
+        alert("Camera/Mic Permission Failed or Call Initialization Error: " + err.message);
+    }
+}
+
+// End Call Session
+async function stopSession(sessionId) {
+    if (!sessionId) return;
+    try {
+        await fetch(`${API_BASE}/call-sessions/${sessionId}/end`, { method: "PUT" });
+        if (localStream) localStream.getTracks().forEach(t => t.stop());
+        if (peerConnection) peerConnection.close();
+        document.getElementById("mediaBox").style.display = "none";
+        alert("Call disconnected.");
+        fetchRequests();
+    } catch(err) {
+        alert("Failed to disconnect: " + err.message);
+    }
+}
+
+// Polling auto sync every 4 seconds
+setInterval(fetchRequests, 4000);
+</script>
+</body>
+</html>

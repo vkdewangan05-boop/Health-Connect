@@ -1,0 +1,50 @@
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .dashboard-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .dashboard-content {
+        padding: 20px;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .data-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .dashboard-header {
+        padding: 15px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 20px;
+    }
+
+    .dashboard-content {
+        padding: 15px;
+    }
+
+}

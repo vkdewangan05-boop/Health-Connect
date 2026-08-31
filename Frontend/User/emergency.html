@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Emergency Service - HealthConnect
+    </title>
+
+
+    <!-- ================= CSS ================= -->
+
+    <link
+        rel="stylesheet"
+        href="../Css/main.css">
+
+    <link
+        rel="stylesheet"
+        href="../Css/dashboard.css">
+
+    <link
+        rel="stylesheet"
+        href="../Css/response.css">
+
+
+    <style>
+
+        /* =========================================
+           EMERGENCY PAGE
+        ========================================= */
+
+        .emergency-intro {
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .emergency-intro h2 {
+
+            color: #b91c1c;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .emergency-warning {
+
+            background: #fef2f2;
+
+            border: 1px solid #fecaca;
+
+            color: #991b1b;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+
+            font-weight: 600;
+
+        }
+
+
+        /* =========================================
+           HELPLINE GRID
+        ========================================= */
+
+        .helpline-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(260px, 1fr)
+                );
+
+            gap: 20px;
+
+            margin-top: 20px;
+
+        }
+
+
+        .helpline-card {
+
+            background: white;
+
+            padding: 22px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 12px
+                rgba(0, 0, 0, 0.08);
+
+            border-left:
+                5px solid #dc2626;
+
+        }
+
+
+        .helpline-card h3 {
+
+            margin-top: 0;
+
+            color: #b91c1c;
+
+        }
+
+
+        .helpline-number {
+
+            font-size: 28px;
+
+            font-weight: 700;
+
+            color: #111827;
+
+            margin: 12px 0;
+
+        }
+
+
+        .helpline-description {
+
+            color: #666;
+
+            line-height: 1.5;
+
+        }
+
+
+        .call-btn {
+
+            display: inline-block;
+
+            margin-top: 12px;
+
+            padding: 10px 18px;
+
+            background: #dc2626;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 6px;
+
+            font-weight: 600;
+
+        }
+
+
+        .call-btn:hover {
+
+            background: #b91c1c;
+
+        }
+
+
+        /* =========================================
+           HOSPITAL SEARCH
+        ========================================= */
+
+        .location-search-card {
+
+            margin-top: 35px;
+
+        }
+
+
+        .location-search-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr auto;
+
+            gap: 12px;
+
+            margin-top: 15px;
+
+        }
+
+
+        .location-search-grid input {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 12px;
+
+            border:
+                1px solid #d1d5db;
+
+            border-radius: 6px;
+
+            font-size: 15px;
+
+        }
+
+
+        .hospital-results {
+
+            margin-top: 25px;
+
+        }
+
+
+        .hospital-result-card {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            margin-bottom: 15px;
+
+            box-shadow:
+                0 4px 12px
+                rgba(0, 0, 0, 0.07);
+
+        }
+
+
+        .hospital-result-card h3 {
+
+            color: #0b7fab;
+
+            margin-top: 0;
+
+        }
+
+
+        .hospital-result-card p {
+
+            color: #555;
+
+            margin: 7px 0;
+
+        }
+
+
+        .hospital-result-actions {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+
+            margin-top: 15px;
+
+        }
+
+
+        .hospital-link-btn {
+
+            display: inline-block;
+
+            padding: 9px 15px;
+
+            background: #0b7fab;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 6px;
+
+        }
+
+
+        .hospital-link-btn:hover {
+
+            background: #086687;
+
+        }
+
+
+        .secondary-btn {
+
+            background: #64748b;
+
+        }
+
+
+        .secondary-btn:hover {
+
+            background: #475569;
+
+        }
+
+
+        .loading-message {
+
+            color: #666;
+
+            padding: 15px 0;
+
+        }
+
+
+        .error-message {
+
+            color: #b91c1c;
+
+            background: #fef2f2;
+
+            border:
+                1px solid #fecaca;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+        }
+
+
+        .empty-message {
+
+            color: #666;
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 4px 12px
+                rgba(0, 0, 0, 0.06);
+
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 600px) {
+
+            .location-search-grid {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .hospital-result-actions {
+
+                flex-direction: column;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard-container">
+
+
+    <!-- =================================================
+         HEADER
+         ================================================= -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                Emergency Service
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="logout-btn"
+            onclick="logoutUser()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <!-- =================================================
+         MAIN CONTENT
+         ================================================= -->
+
+    <main class="dashboard-content">
+
+
+        <!-- =================================================
+             INTRODUCTION
+             ================================================= -->
+
+        <div class="emergency-intro">
+
+            <h2>
+                🚨 Emergency Healthcare Assistance
+            </h2>
+
+            <p>
+
+                Access important government emergency
+                helpline numbers and find healthcare
+                facilities at your required location.
+
+            </p>
+
+        </div>
+
+
+        <div class="emergency-warning">
+
+            ⚠️ In a life-threatening emergency,
+            contact the appropriate emergency service
+            immediately.
+
+        </div>
+
+
+
+        <!-- =================================================
+             GOVERNMENT HELPLINE NUMBERS
+             ================================================= -->
+
+        <section>
+
+            <h2>
+                Important Government Helpline Numbers
+            </h2>
+
+            <p>
+
+                These numbers are provided for important
+                emergency and healthcare-related services.
+
+            </p>
+
+
+            <div class="helpline-grid">
+
+
+                <!-- 112 -->
+
+                <div class="helpline-card">
+
+                    <h3>
+                        🚨 Emergency Response
+                    </h3>
+
+                    <div class="helpline-number">
+                        112
+                    </div>
+
+                    <p class="helpline-description">
+
+                        India's unified emergency response
+                        number for police, fire and medical
+                        emergencies.
+
+                    </p>
+
+                    <a
+                        href="tel:112"
+                        class="call-btn">
+
+                        Call 112
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- 108 -->
+
+                <div class="helpline-card">
+
+                    <h3>
+                        🚑 Ambulance
+                    </h3>
+
+                    <div class="helpline-number">
+                        108
+                    </div>
+
+                    <p class="helpline-description">
+
+                        Emergency ambulance service
+                        available in many parts of India.
+
+                    </p>
+
+                    <a
+                        href="tel:108"
+                        class="call-btn">
+
+                        Call 108
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- 102 -->
+
+                <div class="helpline-card">
+
+                    <h3>
+                        🤰 Maternal & Child Health
+                    </h3>
+
+                    <div class="helpline-number">
+                        102
+                    </div>
+
+                    <p class="helpline-description">
+
+                        Government ambulance transport
+                        service associated with maternal
+                        and child health services.
+
+                    </p>
+
+                    <a
+                        href="tel:102"
+                        class="call-btn">
+
+                        Call 102
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- 1098 -->
+
+                <div class="helpline-card">
+
+                    <h3>
+                        👶 Child Emergency Assistance
+                    </h3>
+
+                    <div class="helpline-number">
+                        1098
+                    </div>
+
+                    <p class="helpline-description">
+
+                        Child Helpline for children who
+                        need immediate assistance or
+                        protection.
+
+                    </p>
+
+                    <a
+                        href="tel:1098"
+                        class="call-btn">
+
+                        Call 1098
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- 181 -->
+
+                <div class="helpline-card">
+
+                    <h3>
+                        🆘 Women Helpline
+                    </h3>
+
+                    <div class="helpline-number">
+                        181
+                    </div>
+
+                    <p class="helpline-description">
+
+                        Government women helpline number
+                        available for assistance and support.
+
+                    </p>
+
+                    <a
+                        href="tel:181"
+                        class="call-btn">
+
+                        Call 181
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- 104 -->
+
+                <div class="helpline-card">
+
+                    <h3>
+                        🏥 Health Helpline
+                    </h3>
+
+                    <div class="helpline-number">
+                        104
+                    </div>
+
+                    <p class="helpline-description">
+
+                        Health-related information and
+                        assistance number used by some
+                        state health departments.
+
+                    </p>
+
+                    <a
+                        href="tel:104"
+                        class="call-btn">
+
+                        Call 104
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             GOVERNMENT HOSPITAL FINDER
+             ================================================= -->
+
+        <section
+            class="dashboard-card location-search-card">
+
+
+            <h2>
+                🏥 Find Government Hospitals
+            </h2>
+
+
+            <p>
+
+                Enter a city, district or location to
+                find registered government hospitals
+                available in HealthConnect.
+
+            </p>
+
+
+            <div class="location-search-grid">
+
+
+                <input
+                    type="text"
+                    id="emergencyLocationSearch"
+                    placeholder="Enter city or location">
+
+
+                <button
+                    type="button"
+                    class="dashboard-btn"
+                    onclick="searchEmergencyHospitals()">
+
+                    Search Hospitals
+
+                </button>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="dashboard-btn secondary-btn"
+                onclick="showAllGovernmentHospitals()"
+                style="margin-top:10px;">
+
+                Show All Government Hospitals
+
+            </button>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             HOSPITAL RESULTS
+             ================================================= -->
+
+        <section class="hospital-results">
+
+
+            <h2>
+                Government Hospitals
+            </h2>
+
+
+            <div id="emergencyHospitalContainer">
+
+                <p class="loading-message">
+
+                    Loading government hospitals...
+
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             BACK TO DASHBOARD
+             ================================================= -->
+
+        <div style="margin-top:30px;">
+
+            <a
+                href="dashboard.html"
+                class="dashboard-btn secondary-btn">
+
+                ← Back to Dashboard
+
+            </a>
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script src="../Js/user.js"></script>
+
+<script src="../Js/emergency.js"></script>
+
+
+</body>
+
+</html>

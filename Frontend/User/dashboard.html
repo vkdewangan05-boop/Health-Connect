@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>User Dashboard - HealthConnect</title>
+
+
+    <!-- ================= CSS ================= -->
+
+    <link rel="stylesheet" href="../Css/main.css">
+
+    <link rel="stylesheet" href="../Css/dashboard.css">
+
+    <link rel="stylesheet" href="../Css/response.css">
+
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="dashboard-header">
+
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                User Dashboard
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="logout-btn"
+            onclick="logoutUser()">
+
+            Logout
+
+        </button>
+
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="dashboard-content">
+
+
+        <!-- ================= WELCOME ================= -->
+
+        <div class="dashboard-title">
+
+
+            <h2 id="userWelcome">
+
+                Welcome!
+
+            </h2>
+
+
+            <p>
+
+                Manage your health and access
+                HealthConnect services.
+
+            </p>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             DASHBOARD SERVICES
+             ================================================= -->
+
+        <div class="dashboard-cards">
+
+
+
+            <!-- =================================================
+                 AI ASSISTANCE
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    AI Assistance
+                </h3>
+
+
+                <p>
+
+                    Get basic health assistance and
+                    general healthcare guidance.
+
+                </p>
+
+
+                <a
+                    href="ai-assistance.html"
+                    class="dashboard-btn">
+
+                    Open AI Assistance
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 HEALTH SURVEY
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    Health Survey
+                </h3>
+
+
+                <p>
+
+                    Complete your health assessment
+                    and provide basic health information.
+
+                </p>
+
+
+                <a
+                    href="health-survey.html"
+                    class="dashboard-btn">
+
+                    Take Survey
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 MEDICAL RECORDS
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    Medical Records
+                </h3>
+
+
+                <p>
+
+                    View your medical history,
+                    diagnoses and healthcare records.
+
+                </p>
+
+
+                <a
+                    href="medical-records.html"
+                    class="dashboard-btn">
+
+                    View Records
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DOCTOR CONSULTATION
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    Doctor Consultation
+                </h3>
+
+
+                <p>
+
+                    Find available doctors and request
+                    a healthcare consultation.
+
+                </p>
+
+
+                <a
+                    href="consultation.html"
+                    class="dashboard-btn">
+
+                    Consult Doctor
+
+                </a>
+
+
+            </div>
+
+<!-- =================================================
+     STUDENT HEALTH ASSISTANCE
+     ================================================= -->
+
+      <div class="dashboard-card">
+
+    <h3>
+        Student Health Assistance
+    </h3>
+
+    <p>
+
+        Get basic health guidance and first-aid
+        information from medical students.
+
+        Medical students do not provide prescriptions.
+
+    </p>
+
+    <a
+        href="student-assistance.html"
+        class="dashboard-btn">
+
+        Get Basic Health Assistance
+
+    </a>
+
+       </div>
+
+
+            
+            <!-- =================================================
+                 MEDICINES
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    Medicines
+                </h3>
+
+
+                <p>
+
+                    View medicines prescribed by your
+                    healthcare professionals.
+
+                </p>
+
+
+                <a
+                    href="medicine.html"
+                    class="dashboard-btn">
+
+                    View Medicines
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 HOSPITAL FINDER
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    Hospital Finder
+                </h3>
+
+
+                <p>
+
+                    Find nearby hospitals and healthcare
+                    facilities.
+
+                </p>
+
+
+                <a
+                    href="hospital-finder.html"
+                    class="dashboard-btn">
+
+                    Find Hospital
+
+                </a>
+
+
+            </div>
+
+
+
+        
+
+<!-- =================================================
+     EMERGENCY SERVICE
+     ================================================= -->
+
+<div class="dashboard-card">
+
+    <h3>
+        🚨 Emergency Service
+    </h3>
+
+    <p>
+
+        Get important government emergency
+        helpline numbers and find nearby
+        government hospitals.
+
+    </p>
+
+    <a
+        href="emergency.html"
+        class="dashboard-btn">
+
+        Open Emergency Service
+
+    </a>
+
+</div>
+
+            <!-- =================================================
+                 HOSPITAL MEDICINE STOCK
+                 ================================================= -->
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    🏥 Hospital Medicine Stock
+                </h3>
+
+
+                <p>
+
+                    Check the availability of medicines
+                    at registered hospitals.
+
+                </p>
+
+
+                <a
+                    href="hospital-medicine-stock.html"
+                    class="dashboard-btn">
+
+                    Check Medicine Stock
+
+                </a>
+
+
+            </div>
+
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     USER JAVASCRIPT
+     ===================================================== -->
+
+<script src="../Js/user.js"></script>
+
+
+</body>
+
+</html>

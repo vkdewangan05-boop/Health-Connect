@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Doctors - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/dashboard.css">
+
+    <style>
+
+        .page-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.08);
+            margin-bottom: 25px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+        }
+
+        .doctor-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .doctor-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            background: #f9fafb;
+        }
+
+        .doctor-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .doctor-row {
+            margin: 8px 0;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .available {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .unavailable {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="page-container">
+
+    <a href="dashboard.html"
+       class="back-btn">
+
+        ← Back to Hospital Dashboard
+
+    </a>
+
+
+    <div class="card">
+
+        <h2>👨‍⚕️ Hospital Doctors</h2>
+
+        <p id="hospitalName">
+            Loading hospital...
+        </p>
+
+        <div id="message"></div>
+
+        <div
+            id="doctorList"
+            class="doctor-grid">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const DOCTOR_API =
+    "http://localhost:8080/api/doctors";
+
+
+let hospital = null;
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadHospitalDoctors
+);
+
+
+async function loadHospitalDoctors() {
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    const list =
+        document.getElementById(
+            "doctorList"
+        );
+
+
+    try {
+
+        const stored =
+            localStorage.getItem(
+                "loggedInHospital"
+            );
+
+
+        if (!stored) {
+
+            window.location.href =
+                "../login.html";
+
+            return;
+        }
+
+
+        try {
+
+            hospital =
+                JSON.parse(stored);
+
+        }
+        catch(error) {
+
+            localStorage.removeItem(
+                "loggedInHospital"
+            );
+
+            window.location.href =
+                "../login.html";
+
+            return;
+        }
+
+
+        if (!hospital.name) {
+
+            throw new Error(
+                "Hospital name not available."
+            );
+
+        }
+
+
+        document.getElementById(
+            "hospitalName"
+        ).textContent =
+            "Hospital: " +
+            hospital.name;
+
+
+        message.textContent =
+            "Loading doctors...";
+
+        message.style.color =
+            "#2563eb";
+
+
+        list.innerHTML =
+            "";
+
+
+        const response =
+            await fetch(
+                `${DOCTOR_API}/hospital/${encodeURIComponent(hospital.name)}`
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        let data;
+
+
+        try {
+
+            data =
+                responseText
+                    ? JSON.parse(responseText)
+                    : [];
+
+        }
+        catch(error) {
+
+            data =
+                responseText;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                typeof data === "string"
+                    ? data
+                    : "Unable to load doctors."
+            );
+
+        }
+
+
+        displayDoctors(
+            Array.isArray(data)
+                ? data
+                : []
+        );
+
+
+    }
+    catch(error) {
+
+        console.error(
+            "Hospital Doctors Error:",
+            error
+        );
+
+
+        message.textContent =
+            error.message ||
+            "Unable to load doctors.";
+
+        message.style.color =
+            "#dc2626";
+
+
+        list.innerHTML =
+            "";
+
+    }
+
+}
+
+
+function displayDoctors(doctors) {
+
+    const list =
+        document.getElementById(
+            "doctorList"
+        );
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    list.innerHTML =
+        "";
+
+
+    if (!Array.isArray(doctors) ||
+        doctors.length === 0) {
+
+        message.textContent =
+            "No doctors are currently associated with this hospital.";
+
+        message.style.color =
+            "#6b7280";
+
+        return;
+    }
+
+
+    message.textContent =
+        doctors.length +
+        " doctor(s) found.";
+
+
+    message.style.color =
+        "#166534";
+
+
+    doctors.forEach(
+        function(doctor) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "doctor-card";
+
+
+            const isAvailable =
+                doctor.available === true ||
+                doctor.available === "true" ||
+                doctor.available === "YES" ||
+                doctor.available === "AVAILABLE";
+
+
+            const statusClass =
+                isAvailable
+                    ? "available"
+                    : "unavailable";
+
+
+            const statusText =
+                isAvailable
+                    ? "Available"
+                    : "Not Available";
+
+
+            card.innerHTML = `
+
+                <h3>
+                    👨‍⚕️ ${escapeHtml(
+                        doctor.fullName ||
+                        doctor.name ||
+                        "Unknown Doctor"
+                    )}
+                </h3>
+
+                <div class="doctor-row">
+
+                    <strong>
+                        Specialization:
+                    </strong>
+
+                    ${escapeHtml(
+                        doctor.specialization ||
+                        "N/A"
+                    )}
+
+                </div>
+
+                <div class="doctor-row">
+
+                    <strong>
+                        Qualification:
+                    </strong>
+
+                    ${escapeHtml(
+                        doctor.qualification ||
+                        "N/A"
+                    )}
+
+                </div>
+
+                <div class="doctor-row">
+
+                    <strong>
+                        Experience:
+                    </strong>
+
+                    ${doctor.experience ?? 0}
+                    years
+
+                </div>
+
+                <div class="doctor-row">
+
+                    <strong>
+                        Doctor Type:
+                    </strong>
+
+                    ${escapeHtml(
+                        doctor.doctorType ||
+                        "N/A"
+                    )}
+
+                </div>
+
+                <div class="doctor-row">
+
+                    <strong>
+                        Consultation Fee:
+                    </strong>
+
+                    ₹${doctor.consultationFee ?? 0}
+
+                </div>
+
+                <div class="doctor-row">
+
+                    <span
+                        class="status ${statusClass}">
+
+                        ${statusText}
+
+                    </span>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        String(value);
+
+
+    return div.innerHTML;
+
+}
+
+</script>
+
+</body>
+
+</html>

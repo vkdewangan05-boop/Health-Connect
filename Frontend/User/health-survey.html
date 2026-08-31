@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Health Survey - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/dashboard.css">
+    <link rel="stylesheet" href="../Css/response.css">
+
+</head>
+
+
+<body style="margin: 0; padding: 0; background-color: #f8fbfc;">
+
+<div class="dashboard-container" style="display: flex; flex-direction: column; min-height: 100vh;">
+
+
+    <header class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: #ffffff; border-bottom: 1px solid #e2e8f0;">
+
+        <div>
+
+            <h1 style="margin: 0; font-size: 22px; color: #102a43;">HealthConnect</h1>
+
+            <p style="margin: 0; font-size: 13px; color: #64748b;">Health Survey</p>
+
+        </div>
+
+
+        <button
+            class="logout-btn"
+            onclick="logoutUser()"
+            style="padding: 8px 16px; border: 1px solid #cbd5e1; background: #ffffff; border-radius: 8px; cursor: pointer; font-weight: 600; color: #334155;">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <main class="dashboard-content" style="flex: 1; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box;">
+
+
+        <div class="dashboard-title" style="width: 100%; max-width: 700px; text-align: center; margin-bottom: 30px;">
+
+            <h2 style="margin: 0 0 8px 0; font-size: 26px; color: #102a43;">Health Survey</h2>
+
+            <p style="margin: 0; color: #64748b; font-size: 14px;">
+                Provide basic health information
+                to maintain your health profile.
+            </p>
+
+        </div>
+
+
+
+        <!-- ================= FORM ================= -->
+
+        <div class="dashboard-card"
+             style="width: 100%; max-width:700px; background: #ffffff; padding: 35px 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); box-sizing: border-box; margin-bottom: 40px;">
+
+
+            <form id="surveyForm">
+
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Age
+                    </label>
+
+                    <input
+                        type="number"
+                        id="age"
+                        required
+                        min="1"
+                        max="120"
+                        placeholder="Enter your age"
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none;">
+                </div>
+
+
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Gender
+                    </label>
+
+                    <select
+                        id="gender"
+                        required
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; background: #fff;">
+
+                        <option value="">
+                            Select Gender
+                        </option>
+
+                        <option value="Male">
+                            Male
+                        </option>
+
+                        <option value="Female">
+                            Female
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                        <option value="Prefer not to say">
+                            Prefer not to say
+                        </option>
+
+                    </select>
+                </div>
+
+
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Height
+                    </label>
+
+                    <input
+                        type="text"
+                        id="height"
+                        placeholder="Example: 170 cm"
+                        required
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none;">
+                </div>
+
+
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Weight
+                    </label>
+
+                    <input
+                        type="text"
+                        id="weight"
+                        placeholder="Example: 65 kg"
+                        required
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none;">
+                </div>
+
+
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Symptoms / Health Concerns
+                    </label>
+
+                    <textarea
+                        id="symptoms"
+                        rows="4"
+                        placeholder="Describe your basic health concern..."
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; resize: vertical;">
+                    </textarea>
+                </div>
+
+
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Allergies
+                    </label>
+
+                    <textarea
+                        id="allergies"
+                        rows="3"
+                        placeholder="Mention known allergies, if any..."
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; resize: vertical;">
+                    </textarea>
+                </div>
+
+
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Existing Health Conditions
+                    </label>
+
+                    <textarea
+                        id="existingConditions"
+                        rows="3"
+                        placeholder="Mention existing conditions, if any..."
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; resize: vertical;">
+                    </textarea>
+                </div>
+
+
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Smoking
+                    </label>
+
+                    <select
+                        id="smoking"
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; background: #fff;">
+
+                        <option value="No">
+                            No
+                        </option>
+
+                        <option value="Yes">
+                            Yes
+                        </option>
+
+                        <option value="Occasionally">
+                            Occasionally
+                        </option>
+
+                    </select>
+                </div>
+
+
+
+                <div style="margin-bottom: 25px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #334155;">
+                        Exercise
+                    </label>
+
+                    <select
+                        id="exercise"
+                        style="width:100%; padding:12px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none; background: #fff;">
+
+                        <option value="">
+                            Select
+                        </option>
+
+                        <option value="Regular">
+                            Regular
+                        </option>
+
+                        <option value="Occasional">
+                            Occasional
+                        </option>
+
+                        <option value="Rarely">
+                            Rarely
+                        </option>
+
+                        <option value="None">
+                            None
+                        </option>
+
+                    </select>
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    class="dashboard-btn"
+                    style="width: 100%; padding: 14px; border: none; background: #0c8f8f; color: white; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: background 0.2s;">
+
+                    Submit Health Survey
+
+                </button>
+
+
+            </form>
+
+
+            <p
+                id="surveyMessage"
+                style="margin-top:20px; font-weight:600; text-align: center;">
+            </p>
+
+
+        </div>
+
+
+
+        <!-- ================= PREVIOUS SURVEYS ================= -->
+
+        <div style="width: 100%; max-width: 700px;">
+            <h2 style="margin-top: 10px; margin-bottom: 15px; font-size: 22px; color: #102a43;">
+                My Previous Surveys
+            </h2>
+
+
+            <div
+                id="surveyContainer"
+                style="width: 100%;">
+
+                <p style="color: #64748b;">
+                    Loading previous surveys...
+                </p>
+
+            </div>
+        </div>
+
+
+    </main>
+
+</div>
+
+
+
+<script src="../Js/user.js"></script>
+
+
+<script>
+    // =====================================================
+// HEALTHCONNECT AUTHENTICATION HELPER
+// =====================================================
+
+function hcGetAuthToken() {
+
+    const tokenKeys = [
+        "token",
+        "jwt",
+        "accessToken"
+    ];
+
+    for (const key of tokenKeys) {
+
+        const token =
+            localStorage.getItem(key);
+
+        if (token && token.trim() !== "") {
+            return token.trim();
+        }
+    }
+
+    const storedUser =
+        localStorage.getItem("loggedInUser");
+
+    if (storedUser) {
+
+        try {
+
+            const user =
+                JSON.parse(storedUser);
+
+            const token =
+                user.token ||
+                user.jwt ||
+                user.accessToken;
+
+            if (
+                token &&
+                String(token).trim() !== ""
+            ) {
+                return String(token).trim();
+            }
+
+        }
+        catch (error) {
+
+            console.error(
+                "Unable to read authentication data:",
+                error
+            );
+
+        }
+
+    }
+
+    return null;
+}
+
+
+// =====================================================
+// AUTHENTICATED FETCH
+// =====================================================
+
+async function hcAuthenticatedFetch(
+    url,
+    options = {}
+) {
+
+    const token =
+        hcGetAuthToken();
+
+    if (!token) {
+
+        alert(
+            "Your login session has expired. Please login again."
+        );
+
+        localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("token");
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("accessToken");
+
+        window.location.href =
+            "../login.html";
+
+        throw new Error(
+            "Authentication token not found."
+        );
+    }
+
+
+    const requestOptions = {
+        ...options
+    };
+
+
+    requestOptions.headers = {
+        ...(options.headers || {})
+    };
+
+
+    if (
+        requestOptions.body &&
+        !(requestOptions.body instanceof FormData) &&
+        !requestOptions.headers["Content-Type"]
+    ) {
+
+        requestOptions.headers["Content-Type"] =
+            "application/json";
+    }
+
+
+    requestOptions.headers["Authorization"] =
+        "Bearer " + token;
+
+
+    const response =
+        await window.fetch(
+            url,
+            requestOptions
+        );
+
+
+    if (response.status === 401) {
+
+        localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("token");
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("accessToken");
+
+        alert(
+            "Your login session has expired. Please login again."
+        );
+
+        window.location.href =
+            "../login.html";
+
+        throw new Error(
+            "Unauthorized request."
+        );
+    }
+
+
+    return response;
+}
+
+
+// =====================================================
+// API
+// =====================================================
+
+const API_URL =
+    "http://localhost:8080";
+
+
+// =====================================================
+// LOGGED-IN USER
+// =====================================================
+
+const storedUser =
+    localStorage.getItem("loggedInUser");
+
+let user = null;
+
+
+if (!storedUser) {
+
+    alert(
+        "Please login first."
+    );
+
+    window.location.href =
+        "../login.html";
+
+}
+else {
+
+    try {
+
+        user =
+            JSON.parse(
+                storedUser
+            );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Unable to read logged-in user:",
+            error
+        );
+
+        alert(
+            "Please login again."
+        );
+
+        window.location.href =
+            "../login.html";
+
+    }
+
+}
+
+
+if (!user || !user.id) {
+
+    throw new Error(
+        "Logged-in user information is missing."
+    );
+
+}
+
+
+// =====================================================
+// SUBMIT SURVEY
+// =====================================================
+
+document.getElementById(
+    "surveyForm"
+).addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+
+        const survey = {
+
+            userId:
+                user.id,
+
+            age:
+                Number(
+                    document.getElementById(
+                        "age"
+                    ).value
+                ),
+
+            gender:
+                document.getElementById(
+                    "gender"
+                ).value,
+
+            height:
+                document.getElementById(
+                    "height"
+                ).value,
+
+            weight:
+                document.getElementById(
+                    "weight"
+                ).value,
+
+            symptoms:
+                document.getElementById(
+                    "symptoms"
+                ).value,
+
+            allergies:
+                document.getElementById(
+                    "allergies"
+                ).value,
+
+            existingConditions:
+                document.getElementById(
+                    "existingConditions"
+                ).value,
+
+            smoking:
+                document.getElementById(
+                    "smoking"
+                ).value,
+
+            exercise:
+                document.getElementById(
+                    "exercise"
+                ).value,
+
+            surveyDate:
+                new Date()
+                    .toISOString()
+                    .split("T")[0]
+
+        };
+
+
+        const message =
+            document.getElementById(
+                "surveyMessage"
+            );
+
+
+        try {
+
+            const response =
+                await hcAuthenticatedFetch(
+                    API_URL +
+                    "/api/health-surveys",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                survey
+                            )
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const error =
+                    await response.text();
+
+                throw new Error(
+                    error ||
+                    "Survey submission failed."
+                );
+
+            }
+
+
+            const result =
+                await response.json();
+
+
+            message.textContent =
+                "Health survey submitted successfully. Survey ID: " +
+                result.id;
+
+
+            alert(
+                "Health survey saved successfully!"
+            );
+
+
+            document.getElementById(
+                "surveyForm"
+            ).reset();
+
+
+            loadSurveys();
+
+        }
+        catch (error) {
+
+            console.error(
+                "Health Survey Error:",
+                error
+            );
+
+            message.textContent =
+                error.message;
+
+        }
+
+    }
+);
+
+
+// =====================================================
+// LOAD PREVIOUS SURVEYS
+// =====================================================
+
+async function loadSurveys() {
+
+    const container =
+        document.getElementById(
+            "surveyContainer"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML =
+        "<p style='color: #64748b;'>Loading previous surveys...</p>";
+
+
+    try {
+
+        const response =
+            await hcAuthenticatedFetch(
+                API_URL +
+                "/api/health-surveys/user/" +
+                user.id
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load surveys."
+            );
+
+        }
+
+
+        const surveys =
+            await response.json();
+
+
+        container.innerHTML =
+            "";
+
+
+        if (
+            !Array.isArray(surveys) ||
+            surveys.length === 0
+        ) {
+
+            container.innerHTML = `
+
+                <div class="dashboard-card" style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center;">
+
+                    <p style="margin: 0; color: #64748b;">
+                        No previous health surveys found.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        surveys.forEach(
+            survey => {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.style.cssText = "background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);";
+
+
+                card.innerHTML = `
+
+                    <h3 style="margin-top: 0; margin-bottom: 12px; color: #102a43; font-size: 18px;">
+                        Survey #${survey.id}
+                    </h3>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Date:</strong>
+                        ${survey.surveyDate || "N/A"}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Age:</strong>
+                        ${survey.age || "N/A"}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Gender:</strong>
+                        ${escapeHTML(
+                            survey.gender ||
+                            "N/A"
+                        )}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Height:</strong>
+                        ${escapeHTML(
+                            survey.height ||
+                            "N/A"
+                        )}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Weight:</strong>
+                        ${escapeHTML(
+                            survey.weight ||
+                            "N/A"
+                        )}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Symptoms:</strong>
+                        ${escapeHTML(
+                            survey.symptoms ||
+                            "None"
+                        )}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Allergies:</strong>
+                        ${escapeHTML(
+                            survey.allergies ||
+                            "None"
+                        )}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Existing Conditions:</strong>
+                        ${escapeHTML(
+                            survey.existingConditions ||
+                            "None"
+                        )}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Smoking:</strong>
+                        ${escapeHTML(
+                            survey.smoking ||
+                            "N/A"
+                        )}
+                    </p>
+
+                    <p style="margin: 6px 0; color: #334155; font-size: 14px;">
+                        <strong>Exercise:</strong>
+                        ${escapeHTML(
+                            survey.exercise ||
+                            "N/A"
+                        )}
+                    </p>
+
+                `;
+
+
+                container.appendChild(
+                    card
+                );
+
+            }
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Survey Load Error:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="dashboard-card" style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center;">
+
+                <p style="margin: 0; color: #ef4444;">
+                    Unable to load surveys.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// =====================================================
+// HTML SAFETY
+// =====================================================
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+// =====================================================
+// START
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadSurveys();
+
+    }
+); 
+
+</script>
+</body>
+
+</html>

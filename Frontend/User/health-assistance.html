@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Health Assistance - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/dashboard.css">
+    <link rel="stylesheet" href="../Css/response.css">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header class="dashboard-header">
+
+        <div>
+            <h1>HealthConnect</h1>
+            <p>Health Assistance</p>
+        </div>
+
+        <button class="logout-btn" onclick="logoutUser()">
+            Logout
+        </button>
+
+    </header>
+
+
+    <main class="dashboard-content">
+
+        <div class="dashboard-title">
+
+            <h2>Health Assistance Services</h2>
+
+            <p>
+                Access useful healthcare support services.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-cards">
+
+            <div class="dashboard-card">
+
+                <h3>Emergency Support</h3>
+
+                <p>
+                    For urgent situations, contact your local
+                    emergency services immediately.
+                </p>
+
+                <button
+                    class="dashboard-btn"
+                    onclick="showHelp('Emergency support selected.')">
+
+                    Get Help
+
+                </button>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <h3>Doctor Consultation</h3>
+
+                <p>
+                    Connect with a healthcare professional.
+                </p>
+
+                <a href="consultation.html"
+                   class="dashboard-btn">
+
+                    Consult Doctor
+
+                </a>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <h3>Hospital Finder</h3>
+
+                <p>
+                    Search for healthcare facilities.
+                </p>
+
+                <a href="hospital-finder.html"
+                   class="dashboard-btn">
+
+                    Find Hospital
+
+                </a>
+
+            </div>
+
+
+            <div class="dashboard-card">
+
+                <h3>Health Survey</h3>
+
+                <p>
+                    Complete a basic health assessment.
+                </p>
+
+                <a href="health-survey.html"
+                   class="dashboard-btn">
+
+                    Start Survey
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <p id="helpMessage"
+           style="margin-top:25px;">
+        </p>
+
+    </main>
+
+</div>
+
+
+<script src="../Js/user.js"></script>
+
+<script>
+
+function showHelp(message) {
+
+    document.getElementById(
+        "helpMessage"
+    ).textContent = message;
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Medicine Stock - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/dashboard.css">
+    <link rel="stylesheet" href="../Css/response.css">
+
+    <style>
+
+        .stock-search-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .stock-search-card h2 {
+            margin-top: 0;
+        }
+
+        .search-section {
+            margin-top: 20px;
+        }
+
+        .search-section label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-row input {
+            flex: 1;
+            min-width: 220px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .search-row button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            background: #166534;
+            color: white;
+            font-weight: bold;
+        }
+
+        .search-row button:hover {
+            opacity: 0.9;
+        }
+
+        .search-row .clear-btn {
+            background: #6b7280;
+        }
+
+        .medicine-search {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .medicine-search.show {
+            display: block;
+        }
+
+        .medicine-search-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .medicine-search-row input {
+            flex: 1;
+            min-width: 220px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .medicine-search-row button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            background: #166534;
+            color: white;
+            font-weight: bold;
+        }
+
+        .medicine-search-row .show-all-btn {
+            background: #2563eb;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .stock-summary {
+            background: white;
+            padding: 18px 22px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(280px, 1fr)
+            );
+            gap: 20px;
+        }
+
+        .stock-card {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #166534;
+        }
+
+        .stock-card.low-stock {
+            border-left-color: #dc2626;
+        }
+
+        .stock-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .stock-card p {
+            margin: 8px 0;
+        }
+
+        .available {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .low {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .empty-box {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 16px;
+            border-radius: 7px;
+            background: #374151;
+            color: white;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                Medicine Stock - View Only
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="logout-btn"
+            onclick="logoutDoctor()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="dashboard-content">
+
+
+        <div class="dashboard-title">
+
+            <h2>
+                Hospital Medicine Stock
+            </h2>
+
+            <p>
+                Check currently available medicines
+                at a particular government hospital.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             HOSPITAL SEARCH
+             ================================================= -->
+
+        <div class="stock-search-card">
+
+            <h2>
+                Search Hospital Stock
+            </h2>
+
+            <p>
+                Enter the Hospital ID to load
+                the medicines currently available
+                at that hospital.
+            </p>
+
+
+            <div class="search-section">
+
+                <label for="hospitalId">
+                    Hospital ID
+                </label>
+
+
+                <div class="search-row">
+
+                    <input
+                        type="number"
+                        id="hospitalId"
+                        placeholder="Enter Hospital ID"
+                        min="1">
+
+
+                    <button
+                        type="button"
+                        onclick="searchHospitalStock()">
+
+                        Load Hospital Stock
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="clear-btn"
+                        onclick="clearStock()">
+
+                        Clear
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 MEDICINE SEARCH
+                 ================================================= -->
+
+            <div
+                id="medicineSearch"
+                class="medicine-search">
+
+                <label for="medicineId">
+
+                    Search Particular Medicine
+                    by Medicine ID
+
+                </label>
+
+
+                <div class="medicine-search-row">
+
+                    <input
+                        type="number"
+                        id="medicineId"
+                        placeholder="Enter Medicine ID"
+                        min="1">
+
+
+                    <button
+                        type="button"
+                        onclick="searchMedicine()">
+
+                        Search Medicine
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="show-all-btn"
+                        onclick="showAllMedicines()">
+
+                        Show All Medicines
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <p
+                id="message"
+                class="message">
+
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STOCK SUMMARY
+             ================================================= -->
+
+        <div
+            id="stockSummary"
+            style="display:none;">
+
+        </div>
+
+
+
+        <!-- =================================================
+             STOCK RESULT
+             ================================================= -->
+
+        <div id="stockContainer">
+
+            <div class="empty-box">
+
+                <h3>
+                    Hospital Stock
+                </h3>
+
+                <p>
+                    Enter a Hospital ID above
+                    to check available medicines.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <a
+            href="doctor-dashboard.html"
+            class="back-btn">
+
+            ← Back to Doctor Dashboard
+
+        </a>
+
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+
+const API_URL =
+    "http://localhost:8080";
+
+
+
+/* =========================================================
+   STORED STOCK DATA
+========================================================= */
+
+let hospitalStock = [];
+
+let currentHospitalId = null;
+
+
+
+/* =========================================================
+   LOAD HOSPITAL STOCK
+========================================================= */
+
+async function searchHospitalStock() {
+
+
+    const hospitalId =
+        document
+            .getElementById("hospitalId")
+            .value
+            .trim();
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    const container =
+        document.getElementById(
+            "stockContainer"
+        );
+
+
+    const medicineSearch =
+        document.getElementById(
+            "medicineSearch"
+        );
+
+
+    if (!hospitalId) {
+
+        message.textContent =
+            "Please enter Hospital ID.";
+
+        message.style.color =
+            "red";
+
+        return;
+
+    }
+
+
+    if (Number(hospitalId) <= 0) {
+
+        message.textContent =
+            "Hospital ID must be greater than 0.";
+
+        message.style.color =
+            "red";
+
+        return;
+
+    }
+
+
+    currentHospitalId =
+        Number(hospitalId);
+
+
+    message.textContent =
+        "Loading hospital medicine stock...";
+
+    message.style.color =
+        "#374151";
+
+
+    medicineSearch.classList.remove(
+        "show"
+    );
+
+
+    container.innerHTML = `
+
+        <div class="empty-box">
+
+            <h3>
+                Loading...
+            </h3>
+
+            <p>
+                Fetching current medicine stock.
+            </p>
+
+        </div>
+
+    `;
+
+
+    try {
+
+
+        const response =
+            await fetch(
+
+                API_URL +
+                "/api/hospital-stock/hospital/" +
+                hospitalId
+
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load hospital stock."
+            );
+
+        }
+
+
+        const stock =
+            await response.json();
+
+
+        if (
+            !Array.isArray(stock) ||
+            stock.length === 0
+        ) {
+
+            hospitalStock = [];
+
+
+            message.textContent =
+                "No medicine stock found for Hospital ID " +
+                hospitalId +
+                ".";
+
+            message.style.color =
+                "#dc2626";
+
+
+            medicineSearch.classList.remove(
+                "show"
+            );
+
+
+            container.innerHTML = `
+
+                <div class="empty-box">
+
+                    <h3>
+                        No Stock Found
+                    </h3>
+
+                    <p>
+                        No medicine stock is currently
+                        available for this hospital.
+                    </p>
+
+                </div>
+
+            `;
+
+
+            hideSummary();
+
+            return;
+
+        }
+
+
+        hospitalStock = stock;
+
+
+        message.textContent =
+            stock.length +
+            " medicine stock record(s) loaded successfully.";
+
+        message.style.color =
+            "#15803d";
+
+
+        medicineSearch.classList.add(
+            "show"
+        );
+
+
+        displayStock(
+            hospitalStock
+        );
+
+
+    }
+    catch (error) {
+
+
+        console.error(
+            "Hospital Stock Error:",
+            error
+        );
+
+
+        hospitalStock = [];
+
+
+        message.textContent =
+            "Unable to load hospital stock.";
+
+        message.style.color =
+            "red";
+
+
+        medicineSearch.classList.remove(
+            "show"
+        );
+
+
+        container.innerHTML = `
+
+            <div class="empty-box">
+
+                <h3>
+                    Error
+                </h3>
+
+                <p>
+                    Unable to connect to
+                    HealthConnect server.
+                </p>
+
+                <p>
+                    Please make sure Spring Boot
+                    backend is running on
+                    localhost:8080.
+                </p>
+
+            </div>
+
+        `;
+
+
+        hideSummary();
+
+    }
+
+}
+
+
+
+/* =========================================================
+   SEARCH PARTICULAR MEDICINE
+========================================================= */
+
+function searchMedicine() {
+
+
+    const medicineId =
+        document
+            .getElementById("medicineId")
+            .value
+            .trim();
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    if (!medicineId) {
+
+        message.textContent =
+            "Please enter Medicine ID.";
+
+        message.style.color =
+            "red";
+
+        return;
+
+    }
+
+
+    if (Number(medicineId) <= 0) {
+
+        message.textContent =
+            "Medicine ID must be greater than 0.";
+
+        message.style.color =
+            "red";
+
+        return;
+
+    }
+
+
+    if (
+        !Array.isArray(hospitalStock) ||
+        hospitalStock.length === 0
+    ) {
+
+        message.textContent =
+            "Please load a hospital stock first.";
+
+        message.style.color =
+            "red";
+
+        return;
+
+    }
+
+
+    const id =
+        Number(medicineId);
+
+
+    const result =
+        hospitalStock.filter(
+            function (item) {
+
+                return Number(
+                    item.medicineId
+                ) === id;
+
+            }
+        );
+
+
+    if (result.length === 0) {
+
+        message.textContent =
+            "Medicine ID " +
+            medicineId +
+            " is not available in Hospital ID " +
+            currentHospitalId +
+            ".";
+
+        message.style.color =
+            "#dc2626";
+
+
+        displayNoMedicineFound(
+            medicineId
+        );
+
+        return;
+
+    }
+
+
+    message.textContent =
+        "Medicine found successfully.";
+
+    message.style.color =
+        "#15803d";
+
+
+    displayStock(result);
+
+}
+
+
+
+/* =========================================================
+   SHOW ALL MEDICINES
+========================================================= */
+
+function showAllMedicines() {
+
+
+    if (
+        !Array.isArray(hospitalStock) ||
+        hospitalStock.length === 0
+    ) {
+
+        return;
+
+    }
+
+
+    message.textContent =
+        "Showing all medicines available in Hospital ID " +
+        currentHospitalId +
+        ".";
+
+    message.style.color =
+        "#15803d";
+
+
+    displayStock(
+        hospitalStock
+    );
+
+
+    document
+        .getElementById("medicineId")
+        .value = "";
+
+}
+
+
+
+/* =========================================================
+   DISPLAY STOCK
+========================================================= */
+
+function displayStock(stock) {
+
+
+    const container =
+        document.getElementById(
+            "stockContainer"
+        );
+
+
+    if (
+        !Array.isArray(stock) ||
+        stock.length === 0
+    ) {
+
+        displayNoMedicineFound();
+
+        return;
+
+    }
+
+
+    let html = `
+
+        <div class="stock-grid">
+
+    `;
+
+
+    stock.forEach(
+        function (item) {
+
+
+            const quantity =
+                Number(
+                    item.quantity || 0
+                );
+
+
+            const reorderLevel =
+                Number(
+                    item.reorderLevel || 0
+                );
+
+
+            const isLow =
+                quantity <= reorderLevel;
+
+
+            const status =
+                isLow
+                    ? "Low Stock"
+                    : "Available";
+
+
+            html += `
+
+                <div
+                    class="stock-card
+                    ${isLow ? "low-stock" : ""}">
+
+
+                    <h3>
+
+                        ${escapeHTML(
+                            item.medicineName ||
+                            "Unknown Medicine"
+                        )}
+
+                    </h3>
+
+
+                    <p>
+
+                        <strong>
+                            Medicine ID:
+                        </strong>
+
+                        ${item.medicineId ?? "-"}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Quantity:
+                        </strong>
+
+                        <span
+                            class="${
+                                isLow
+                                    ? "low"
+                                    : "available"
+                            }">
+
+                            ${quantity}
+
+                        </span>
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Reorder Level:
+                        </strong>
+
+                        ${reorderLevel}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Status:
+                        </strong>
+
+                        <span
+                            class="${
+                                isLow
+                                    ? "low"
+                                    : "available"
+                            }">
+
+                            ${status}
+
+                        </span>
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Batch Number:
+                        </strong>
+
+                        ${escapeHTML(
+                            item.batchNumber ||
+                            "-"
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <strong>
+                            Expiry Date:
+                        </strong>
+
+                        ${escapeHTML(
+                            item.expiryDate ||
+                            "-"
+                        )}
+
+                    </p>
+
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    html += `
+
+        </div>
+
+    `;
+
+
+    container.innerHTML =
+        html;
+
+
+    displaySummary(
+        stock
+    );
+
+}
+
+
+
+/* =========================================================
+   NO MEDICINE FOUND
+========================================================= */
+
+function displayNoMedicineFound(
+    medicineId = ""
+) {
+
+
+    const container =
+        document.getElementById(
+            "stockContainer"
+        );
+
+
+    container.innerHTML = `
+
+        <div class="empty-box">
+
+            <h3>
+                Medicine Not Found
+            </h3>
+
+            <p>
+
+                ${
+                    medicineId
+                        ? "Medicine ID " +
+                          escapeHTML(medicineId) +
+                          " is not available in this hospital."
+                        : "No medicine found."
+                }
+
+            </p>
+
+        </div>
+
+    `;
+
+
+    hideSummary();
+
+}
+
+
+
+/* =========================================================
+   STOCK SUMMARY
+========================================================= */
+
+function displaySummary(
+    stock
+) {
+
+
+    const summary =
+        document.getElementById(
+            "stockSummary"
+        );
+
+
+    const total =
+        stock.length;
+
+
+    const lowStockCount =
+        stock.filter(
+            function (item) {
+
+                return Number(
+                    item.quantity || 0
+                ) <= Number(
+                    item.reorderLevel || 0
+                );
+
+            }
+        ).length;
+
+
+    summary.style.display =
+        "block";
+
+
+    summary.innerHTML = `
+
+        <strong>
+            Hospital ID:
+        </strong>
+
+        ${currentHospitalId}
+
+        &nbsp;&nbsp; | &nbsp;&nbsp;
+
+        <strong>
+            Records Shown:
+        </strong>
+
+        ${total}
+
+        &nbsp;&nbsp; | &nbsp;&nbsp;
+
+        <strong>
+            Low Stock:
+        </strong>
+
+        <span
+            class="${
+                lowStockCount > 0
+                    ? "low"
+                    : "available"
+            }">
+
+            ${lowStockCount}
+
+        </span>
+
+    `;
+
+}
+
+
+
+/* =========================================================
+   HIDE SUMMARY
+========================================================= */
+
+function hideSummary() {
+
+
+    const summary =
+        document.getElementById(
+            "stockSummary"
+        );
+
+
+    summary.style.display =
+        "none";
+
+
+    summary.innerHTML =
+        "";
+
+}
+
+
+
+/* =========================================================
+   CLEAR EVERYTHING
+========================================================= */
+
+function clearStock() {
+
+
+    document
+        .getElementById("hospitalId")
+        .value = "";
+
+
+    document
+        .getElementById("medicineId")
+        .value = "";
+
+
+    document
+        .getElementById("message")
+        .textContent = "";
+
+
+    document
+        .getElementById("medicineSearch")
+        .classList.remove(
+            "show"
+        );
+
+
+    document
+        .getElementById("stockContainer")
+        .innerHTML = `
+
+        <div class="empty-box">
+
+            <h3>
+                Hospital Stock
+            </h3>
+
+            <p>
+                Enter a Hospital ID above
+                to check available medicines.
+            </p>
+
+        </div>
+
+    `;
+
+
+    hospitalStock = [];
+
+    currentHospitalId = null;
+
+
+    hideSummary();
+
+}
+
+
+
+/* =========================================================
+   HTML SAFETY
+========================================================= */
+
+function escapeHTML(
+    value
+) {
+
+
+    return String(value)
+
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+
+/* =========================================================
+   LOGOUT DOCTOR
+========================================================= */
+
+function logoutDoctor() {
+
+
+    localStorage.removeItem(
+        "loggedInUser"
+    );
+
+
+    localStorage.removeItem(
+        "doctor"
+    );
+
+
+    localStorage.removeItem(
+        "loggedInDoctor"
+    );
+
+
+    window.location.href =
+        "../login.html";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

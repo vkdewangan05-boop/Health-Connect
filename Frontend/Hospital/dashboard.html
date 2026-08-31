@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Hospital Dashboard - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/dashboard.css">
+    <link rel="stylesheet" href="../Css/response.css">
+
+    <style>
+
+        .hospital-info {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .08);
+        }
+
+        .hospital-info h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .hospital-info p {
+            margin: 7px 0;
+        }
+
+        .hospital-id {
+            font-weight: bold;
+        }
+
+        .management-note {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f0fdf4;
+            color: #166534;
+            font-weight: 500;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+    <!-- HEADER -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                Hospital Dashboard
+            </p>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="logout-btn"
+            onclick="logoutHospital()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="dashboard-content">
+
+
+        <div class="dashboard-title">
+
+            <h2>
+                Hospital Management
+            </h2>
+
+            <p>
+                Manage hospital medicines, doctors,
+                patients and available healthcare facilities.
+            </p>
+
+        </div>
+
+
+        <!-- HOSPITAL INFO -->
+
+        <div class="hospital-info">
+
+            <h3>
+                🏥 Hospital Information
+            </h3>
+
+
+            <p>
+
+                <strong>
+                    Hospital Name:
+                </strong>
+
+                <span id="hospitalName">
+                    Loading...
+                </span>
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Hospital ID:
+                </strong>
+
+                <span
+                    id="hospitalId"
+                    class="hospital-id">
+
+                    Loading...
+
+                </span>
+
+            </p>
+
+
+            <div class="management-note">
+
+                Hospital information, doctors,
+                patients and facilities are now
+                connected with the backend.
+
+            </div>
+
+        </div>
+
+
+        <!-- SERVICES -->
+
+        <div class="dashboard-cards">
+
+
+            <!-- MEDICINE STOCK -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    💊 Medicine Stock Management
+                </h3>
+
+                <p>
+                    Add medicines, update quantities,
+                    check stock levels and manage inventory.
+                </p>
+
+                <a
+                    href="medicine-stock.html"
+                    class="dashboard-btn">
+
+                    Manage Medicine Stock
+
+                </a>
+
+            </div>
+
+
+            <!-- DISPENSING -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    📦 Medicine Dispensing
+                </h3>
+
+                <p>
+                    Manage medicine dispensing
+                    records for patients.
+                </p>
+
+                <a
+                    href="dispensing.html"
+                    class="dashboard-btn">
+
+                    Open Dispensing
+
+                </a>
+
+            </div>
+
+
+            <!-- PATIENTS -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    🧑‍⚕️ Patients
+                </h3>
+
+                <p>
+                    View patients associated with
+                    this hospital from the database.
+                </p>
+
+                <a
+                    href="hospital-patients.html"
+                    class="dashboard-btn">
+
+                    Patient Management
+
+                </a>
+
+            </div>
+
+
+            <!-- DOCTORS -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    👨‍⚕️ Hospital Doctors
+                </h3>
+
+                <p>
+                    View doctors working at this
+                    hospital from the database.
+                </p>
+
+                <a
+                    href="hospital-doctors.html"
+                    class="dashboard-btn">
+
+                    Doctor Management
+
+                </a>
+
+            </div>
+
+
+            <!-- FACILITIES -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    🏥 Hospital Facilities
+                </h3>
+
+                <p>
+                    View and manage hospital facilities
+                    stored in the database.
+                </p>
+
+                <a
+                    href="hospital-facilities.html"
+                    class="dashboard-btn">
+
+                    Manage Facilities
+
+                </a>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+
+            <div class="dashboard-card">
+
+                <h3>
+                    📋 Hospital Information
+                </h3>
+
+                <p>
+                    View and update hospital name,
+                    location, contact and availability.
+                </p>
+
+                <a
+                    href="hospital-information.html"
+                    class="dashboard-btn">
+
+                    Hospital Details
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="hospitalMessage"
+            style="
+                margin-top:25px;
+                font-weight:bold;
+            ">
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+<script>
+
+const HOSPITAL_API =
+    "http://localhost:8080/api/hospitals";
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadHospital
+);
+
+
+async function loadHospital() {
+
+    const message =
+        document.getElementById(
+            "hospitalMessage"
+        );
+
+
+    try {
+
+        const stored =
+            localStorage.getItem(
+                "loggedInHospital"
+            );
+
+
+        if (!stored) {
+
+            window.location.href =
+                "../login.html";
+
+            return;
+        }
+
+
+        let hospital;
+
+
+        try {
+
+            hospital =
+                JSON.parse(stored);
+
+        }
+        catch(error) {
+
+            localStorage.removeItem(
+                "loggedInHospital"
+            );
+
+            window.location.href =
+                "../login.html";
+
+            return;
+        }
+
+
+        if (!hospital.hospitalId) {
+
+            throw new Error(
+                "Hospital ID not available."
+            );
+
+        }
+
+
+        message.textContent =
+            "Loading hospital information...";
+
+        message.style.color =
+            "#2563eb";
+
+
+        const response =
+            await fetch(
+                `${HOSPITAL_API}/hospital-id/${encodeURIComponent(hospital.hospitalId)}`
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                responseText ||
+                "Unable to load hospital."
+            );
+
+        }
+
+
+        const freshHospital =
+            responseText
+                ? JSON.parse(responseText)
+                : hospital;
+
+
+        localStorage.setItem(
+            "loggedInHospital",
+            JSON.stringify(
+                freshHospital
+            )
+        );
+
+
+        document.getElementById(
+            "hospitalName"
+        ).textContent =
+            freshHospital.name ||
+            "Hospital";
+
+
+        document.getElementById(
+            "hospitalId"
+        ).textContent =
+            freshHospital.hospitalId ||
+            "Not Available";
+
+
+        message.textContent =
+            "";
+
+
+    }
+    catch(error) {
+
+        console.error(
+            "Hospital Dashboard Error:",
+            error
+        );
+
+
+        message.textContent =
+            error.message ||
+            "Unable to load hospital information.";
+
+
+        message.style.color =
+            "#dc2626";
+
+    }
+
+}
+
+
+function logoutHospital() {
+
+    localStorage.removeItem(
+        "loggedInUser"
+    );
+
+    localStorage.removeItem(
+        "hospital"
+    );
+
+    localStorage.removeItem(
+        "loggedInHospital"
+    );
+
+    localStorage.removeItem(
+        "isLoggedIn"
+    );
+
+    localStorage.removeItem(
+        "userRole"
+    );
+
+
+    window.location.href =
+        "../login.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

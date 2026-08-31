@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Assistance - HealthConnect</title>
+
+    <link rel="stylesheet" href="../Css/main.css">
+    <link rel="stylesheet" href="../Css/dashboard.css">
+    <link rel="stylesheet" href="../Css/response.css">
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+    <header class="dashboard-header">
+
+        <div>
+            <h1>HealthConnect</h1>
+            <p>AI Health Assistance</p>
+        </div>
+
+        <button class="logout-btn" onclick="logoutUser()">
+            Logout
+        </button>
+
+    </header>
+
+    <main class="dashboard-content">
+
+        <div class="dashboard-title">
+
+            <h2>AI Health Assistance</h2>
+
+            <p>
+                Describe your health concern to get basic guidance.
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <form id="aiForm">
+
+                <textarea
+                    id="healthQuestion"
+                    placeholder="Describe your health concern..."
+                    rows="6"
+                    style="width:100%; padding:12px; border:1px solid #ccc; border-radius:6px;"
+                    required>
+                </textarea>
+
+                <br><br>
+
+                <button
+                    type="submit"
+                    class="dashboard-btn">
+
+                    Get Assistance
+
+                </button>
+
+            </form>
+
+
+            <div id="aiResponse"
+                 style="margin-top:20px;">
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script src="../Js/user.js"></script>
+
+<script>
+
+document.getElementById("aiForm")
+.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const question =
+        document.getElementById("healthQuestion").value;
+
+    const response =
+        document.getElementById("aiResponse");
+
+    response.innerHTML = `
+        <h3>HealthConnect Assistant</h3>
+        <p>
+            Your concern has been received.
+            For proper medical advice, please consult
+            a qualified healthcare professional.
+        </p>
+        <p>
+            <strong>Your query:</strong>
+            ${question}
+        </p>
+    `;
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Patients - HealthConnect
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../Css/main.css">
+
+    <link
+        rel="stylesheet"
+        href="../Css/dashboard.css">
+
+    <link
+        rel="stylesheet"
+        href="../Css/response.css">
+
+</head>
+
+
+<body>
+
+<div class="dashboard-container">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="dashboard-header">
+
+        <div>
+
+            <h1>
+                HealthConnect
+            </h1>
+
+            <p>
+                Patient Management
+            </p>
+
+        </div>
+
+
+        <button
+            class="logout-btn"
+            type="button"
+            onclick="logoutDoctor()">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="dashboard-content">
+
+
+        <div class="dashboard-title">
+
+            <h2>
+                Patient List
+            </h2>
+
+            <p>
+                View patients whose consultation requests
+                have been accepted by you.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             REFRESH
+             ================================================= -->
+
+        <div
+            style="
+                margin-bottom:20px;
+            ">
+
+            <button
+                type="button"
+                class="dashboard-btn"
+                onclick="loadDoctorPatients()">
+
+                🔄 Refresh Patients
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PATIENT TABLE
+             ================================================= -->
+
+        <div
+            style="
+                overflow-x:auto;
+            ">
+
+            <table class="data-table">
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Patient Name
+                    </th>
+
+                    <th>
+                        Username
+                    </th>
+
+                    <th>
+                        Contact
+                    </th>
+
+                    <th>
+                        Doctor
+                    </th>
+
+                    <th>
+                        Consultation ID
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody id="patientTable">
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        style="
+                            text-align:center;
+                            padding:20px;
+                        ">
+
+                        Loading patients...
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script src="../Js/doctor.js"></script>
+
+<script src="../Js/patient.js"></script>
+
+
+</body>
+
+</html>

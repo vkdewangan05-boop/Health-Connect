@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Login | HealthConnect</title>
+
+    <!-- Google Fonts for Clean Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+
+<body style="
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at 85% 15%, rgba(12, 143, 143, 0.08) 0%, transparent 45%), linear-gradient(135deg, #f4f8f9, #eef3f7);
+    color: #172033;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+">
+
+
+<div style="
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+    box-sizing: border-box;
+">
+
+
+    <div style="
+        width: 100%;
+        max-width: 440px;
+        padding: 45px 40px;
+        background: #ffffff;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(12, 143, 143, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.03);
+        box-sizing: border-box;
+    ">
+
+
+        <!-- ==========================================
+             HEADER
+             ========================================== -->
+
+        <div style="
+            text-align: center;
+            margin-bottom: 30px;
+        ">
+
+            <div style="
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 14px;
+                background: #e6f6f4;
+                color: #0c8f8f;
+                border-radius: 30px;
+                font-size: 12px;
+                font-weight: 700;
+                margin-bottom: 16px;
+            ">
+                <span style="width: 6px; height: 6px; background-color: #0c8f8f; border-radius: 50%; display: inline-block;"></span>
+                HealthConnect
+            </div>
+
+            <h1 style="
+                margin: 0 0 8px 0;
+                font-size: 28px;
+                font-weight: 800;
+                color: #102a43;
+                letter-spacing: -0.6px;
+            ">
+                Welcome Back
+            </h1>
+
+            <p style="
+                margin: 0;
+                color: #64748b;
+                font-size: 14px;
+                font-weight: 400;
+            ">
+                Login to continue to HealthConnect
+            </p>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             LOGIN FORM
+             ========================================== -->
+
+        <form id="loginForm">
+
+
+            <!-- USERNAME -->
+
+            <div style="
+                margin-bottom: 20px;
+            ">
+
+                <label for="username" style="
+                    display: block;
+                    margin-bottom: 8px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #334155;
+                ">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                    autocomplete="username"
+                    style="
+                        width: 100%;
+                        box-sizing: border-box;
+                        padding: 13px 16px;
+                        border: 1.5px solid #e2e8f0;
+                        border-radius: 12px;
+                        outline: none;
+                        font-size: 14px;
+                        color: #0f172a;
+                        background-color: #fafbfc;
+                        transition: all 0.25s ease-in-out;
+                    "
+                    onfocus="this.style.borderColor='#0c8f8f'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='0 0 0 4px rgba(12, 143, 143, 0.1)';"
+                    onblur="this.style.borderColor='#e2e8f0'; this.style.backgroundColor='#fafbfc'; this.style.boxShadow='none';"
+                >
+
+            </div>
+
+
+
+            <!-- PASSWORD -->
+
+            <div style="
+                margin-bottom: 20px;
+            ">
+
+                <label for="password" style="
+                    display: block;
+                    margin-bottom: 8px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #334155;
+                ">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                    autocomplete="current-password"
+                    style="
+                        width: 100%;
+                        box-sizing: border-box;
+                        padding: 13px 16px;
+                        border: 1.5px solid #e2e8f0;
+                        border-radius: 12px;
+                        outline: none;
+                        font-size: 14px;
+                        color: #0f172a;
+                        background-color: #fafbfc;
+                        transition: all 0.25s ease-in-out;
+                    "
+                    onfocus="this.style.borderColor='#0c8f8f'; this.style.backgroundColor='#ffffff'; this.style.boxShadow='0 0 0 4px rgba(12, 143, 143, 0.1)';"
+                    onblur="this.style.borderColor='#e2e8f0'; this.style.backgroundColor='#fafbfc'; this.style.boxShadow='none';"
+                >
+
+            </div>
+
+
+
+            <!-- REMEMBER ME -->
+
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 5px 0 24px 0;
+                font-size: 13px;
+            ">
+
+                <label style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    color: #475569;
+                    cursor: pointer;
+                    font-weight: 400;
+                ">
+
+                    <input
+                        type="checkbox"
+                        id="rememberMe"
+                        style="
+                            width: 16px;
+                            height: 16px;
+                            accent-color: #0c8f8f;
+                            cursor: pointer;
+                            border-radius: 4px;
+                        "
+                    >
+
+                    <span>
+                        Remember me
+                    </span>
+
+                </label>
+
+
+                <a href="#"
+                   id="forgotPassword"
+                   style="
+                       color: #0c8f8f;
+                       text-decoration: none;
+                       font-weight: 600;
+                   "
+                   onmouseover="this.style.textDecoration='underline';"
+                   onmouseout="this.style.textDecoration='none';"
+                >
+
+                    Forgot Password?
+
+                </a>
+
+            </div>
+
+
+
+            <!-- LOGIN BUTTON -->
+
+            <button
+                type="submit"
+                id="loginButton"
+                style="
+                    width: 100%;
+                    padding: 15px;
+                    border: none;
+                    border-radius: 12px;
+                    background: #0c8f8f;
+                    color: white;
+                    font-size: 15px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.25s ease;
+                    box-shadow: 0 6px 16px rgba(12, 143, 143, 0.25);
+                "
+                onmouseover="this.style.background='#087777'; this.style.transform='translateY(-1px)';"
+                onmouseout="this.style.background='#0c8f8f'; this.style.transform='translateY(0)';"
+            >
+
+                Login
+
+            </button>
+
+
+
+            <!-- LOGIN MESSAGE -->
+
+            <p id="loginMessage" style="
+                text-align: center;
+                margin: 15px 0 0 0;
+                font-size: 14px;
+                min-height: 20px;
+            "></p>
+
+
+        </form>
+
+
+
+        <!-- ==========================================
+             REGISTER
+             ========================================== -->
+
+        <div style="
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: #64748b;
+        ">
+
+            <span>
+                Don't have an account?
+            </span>
+
+            <a href="register.html" style="
+                color: #0c8f8f;
+                text-decoration: none;
+                font-weight: 600;
+                margin-left: 4px;
+            "
+            onmouseover="this.style.textDecoration='underline';"
+            onmouseout="this.style.textDecoration='none';"
+            >
+                Register
+            </a>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             MEDICAL STUDENT
+             ========================================== -->
+
+        <div style="
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px dashed #e2e8f0;
+            text-align: center;
+        ">
+
+            <p style="
+                font-size: 13px;
+                color: #64748b;
+                margin: 0 0 8px 0;
+            ">
+                Are you a medical student?
+            </p>
+
+
+            <a
+                href="Student/student-register.html"
+                style="
+                    display: inline-block;
+                    padding: 8px 16px;
+                    background: #f1f5f9;
+                    color: #0c8f8f;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    text-decoration: none;
+                    transition: all 0.2s ease;
+                "
+                onmouseover="this.style.background='#e6f6f4'; this.style.borderColor='#0c8f8f';"
+                onmouseout="this.style.background='#f1f5f9'; this.style.borderColor='#cbd5e1';"
+            >
+
+                Register as Medical Student
+
+            </a>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             BACK HOME
+             ========================================== -->
+
+        <div style="
+            text-align: center;
+            margin-top: 18px;
+        ">
+
+            <a href="index.html" style="
+                color: #64748b;
+                text-decoration: none;
+                font-size: 13px;
+                transition: color 0.2s;
+            "
+            onmouseover="this.style.color='#0c8f8f';"
+            onmouseout="this.style.color='#64748b';"
+            >
+                ← Back to Home
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==============================================
+     JAVASCRIPT
+     ============================================== -->
+
+<script src="js/main.js"></script>
+
+<script src="js/auth.js"></script>
+
+
+</body>
+
+</html>d

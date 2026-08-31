@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Prescription Medicines - HealthConnect</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+}
+
+.header {
+    background: #7c3aed;
+    color: white;
+    padding: 22px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    background: #6d28d9;
+    padding: 10px 15px;
+    border-radius: 7px;
+}
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 30px auto;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+h2 {
+    color: #7c3aed;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+}
+
+button {
+    background: #7c3aed;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.medicine {
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    padding: 18px;
+    margin-top: 15px;
+}
+
+.message {
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="header">
+
+<div>
+<h1>HealthConnect</h1>
+<p>Prescription Medicines</p>
+</div>
+
+<a href="doctor-dashboard.html">
+Dashboard
+</a>
+
+</header>
+
+
+<div class="container">
+
+<div class="card">
+
+<h2>Add Medicine to Prescription</h2>
+
+<form id="medicineForm">
+
+<div class="form-group">
+
+<label>Prescription ID</label>
+
+<input
+type="number"
+id="prescriptionId"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Medicine ID</label>
+
+<input
+type="number"
+id="medicineId"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Medicine Name</label>
+
+<input
+type="text"
+id="medicineName"
+required>
+
+</div>
+
+
+<div class="form-group">
+
+<label>Dosage</label>
+
+<input
+type="text"
+id="dosage"
+placeholder="Example: 1 tablet">
+
+</div>
+
+
+<div class="form-group">
+
+<label>Frequency</label>
+
+<input
+type="text"
+id="frequency"
+placeholder="Example: Twice daily">
+
+</div>
+
+
+<div class="form-group">
+
+<label>Duration</label>
+
+<input
+type="text"
+id="duration"
+placeholder="Example: 5 days">
+
+</div>
+
+
+<div class="form-group">
+
+<label>Instructions</label>
+
+<textarea
+id="instructions"></textarea>
+
+</div>
+
+
+<button type="submit">
+Add Medicine
+</button>
+
+</form>
+
+<p id="message"
+   class="message"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Prescription Medicines</h2>
+
+<input
+type="number"
+id="searchPrescriptionId"
+placeholder="Enter Prescription ID">
+
+<br><br>
+
+<button onclick="loadMedicines()">
+Load Medicines
+</button>
+
+<div id="medicineList">
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const API =
+"http://localhost:8080";
+
+
+document.getElementById(
+"medicineForm"
+).addEventListener(
+"submit",
+async function(event) {
+
+event.preventDefault();
+
+
+const medicine = {
+
+prescriptionId:
+Number(
+document.getElementById(
+"prescriptionId"
+).value
+),
+
+medicineId:
+Number(
+document.getElementById(
+"medicineId"
+).value
+),
+
+medicineName:
+document.getElementById(
+"medicineName"
+).value,
+
+dosage:
+document.getElementById(
+"dosage"
+).value,
+
+frequency:
+document.getElementById(
+"frequency"
+).value,
+
+duration:
+document.getElementById(
+"duration"
+).value,
+
+instructions:
+document.getElementById(
+"instructions"
+).value
+
+};
+
+
+try {
+
+const response =
+await fetch(
+API + "/api/prescription-medicines",
+{
+method: "POST",
+
+headers: {
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify(medicine)
+});
+
+
+if(!response.ok) {
+throw new Error();
+}
+
+
+document.getElementById(
+"message"
+).textContent =
+"Medicine added successfully.";
+
+document.getElementById(
+"message"
+).style.color =
+"green";
+
+
+document.getElementById(
+"medicineForm"
+).reset();
+
+
+} catch(error) {
+
+document.getElementById(
+"message"
+).textContent =
+"Unable to add medicine.";
+
+document.getElementById(
+"message"
+).style.color =
+"red";
+
+}
+
+});
+
+
+async function loadMedicines() {
+
+const id =
+document.getElementById(
+"searchPrescriptionId"
+).value;
+
+
+if(!id) {
+
+alert(
+"Please enter Prescription ID."
+);
+
+return;
+
+}
+
+
+const list =
+document.getElementById(
+"medicineList"
+);
+
+list.innerHTML =
+"<p>Loading...</p>";
+
+
+try {
+
+const response =
+await fetch(
+API +
+"/api/prescription-medicines/prescription/"
++
+id
+);
+
+
+if(!response.ok) {
+throw new Error();
+}
+
+
+const data =
+await response.json();
+
+
+list.innerHTML = "";
+
+
+if(data.length === 0) {
+
+list.innerHTML =
+"<p>No medicines found.</p>";
+
+return;
+
+}
+
+
+data.forEach(function(item) {
+
+list.innerHTML += `
+
+<div class="medicine">
+
+<p>
+<strong>ID:</strong>
+${item.id}
+</p>
+
+<p>
+<strong>Medicine:</strong>
+${item.medicineName}
+</p>
+
+<p>
+<strong>Dosage:</strong>
+${item.dosage}
+</p>
+
+<p>
+<strong>Frequency:</strong>
+${item.frequency}
+</p>
+
+<p>
+<strong>Duration:</strong>
+${item.duration}
+</p>
+
+<p>
+<strong>Instructions:</strong>
+${item.instructions || "-"}
+</p>
+
+</div>
+
+`;
+
+});
+
+
+} catch(error) {
+
+list.innerHTML =
+"<p style='color:red;'>Unable to load medicines.</p>";
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
